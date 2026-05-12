@@ -9,6 +9,18 @@ import Processes from "@/components/Home/Processes";
 import Review from "@/components/Home/Review";
 import WhatSend from "@/components/Home/WhatSend";
 import WhatWeOffer from "@/components/Home/WhatWeOffer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Speed Xpress — Swift Parcel Management",
+  description:
+    "Send, receive, and track parcels with ease. Tailored dashboards for customers, merchants, admins, and riders.",
+  openGraph: {
+    title: "Speed Xpress — Swift Parcel Management",
+    description:
+      "Send, receive, and track parcels with ease. Tailored dashboards for customers, merchants, admins, and riders.",
+  },
+};
 
 const HomePage = () => {
   return (

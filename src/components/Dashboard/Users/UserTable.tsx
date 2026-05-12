@@ -1,11 +1,7 @@
 "use client";
 
 import { columns } from "@/data/userData";
-import {
-  useFilter,
-  usePagination,
-  useVisibleColumns,
-} from "@/hooks/useUserTable";
+import { useTableControls } from "@/hooks/useTableControls";
 import {
   Button,
   Chip,
@@ -38,9 +34,7 @@ import { toast } from "react-toastify";
 const UserTable = () => {
   // hooks
   let { allIsLoading, allUser, refetchAll } = useUserInfo();
-  const { page, setPage, onNextPage, onPreviousPage } = usePagination();
-  const { filterValue, onSearchChange, onClear } = useFilter();
-  const { visibleColumns, setVisibleColumns } = useVisibleColumns();
+  const { page, setPage, onNextPage, onPreviousPage, filterValue, onSearchChange, onClearSearch, visibleColumns, setVisibleColumns } = useTableControls(["name", "email", "role", "number", "actions"]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const router = useRouter();
   const pathname = usePathname();
@@ -215,7 +209,7 @@ const UserTable = () => {
             placeholder="Search By Name, Email, Role"
             startContent={<SearchIcon />}
             value={filterValue}
-            onClear={() => onClear()}
+            onClear={() => onClearSearch()}
             onValueChange={onSearchChange}
           />
           <Dropdown>
@@ -268,7 +262,7 @@ const UserTable = () => {
     setVisibleColumns,
     users.length,
     onRowsPerPageChange,
-    onClear,
+    onClearSearch,
   ]);
 
   const bottomContent = useMemo(() => {

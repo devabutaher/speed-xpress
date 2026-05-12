@@ -1,6 +1,7 @@
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
-import { ParcelType } from "./ParcelType";
+// src/types/FormTypes.ts
+import { Role } from "@/lib/constants";
 
+// ── Register ──────────────────────────────────────────────────────────────────
 export type RegisterFormType = {
   name: string;
   email: string;
@@ -12,7 +13,8 @@ export type RegisterFormType = {
 
 type UserDataType = {
   photoURL: string;
-  role: string;
+  /** Typed Role instead of loose string */
+  role: Role;
   division: string;
   district: string;
   vehicle?: string;
@@ -22,6 +24,7 @@ type RegisterFormWithoutPassword = Omit<RegisterFormType, "password">;
 
 export type RegisterUserDataType = RegisterFormWithoutPassword & UserDataType;
 
+// ── Select component prop types ───────────────────────────────────────────────
 export type DivisionPropsType = {
   variant?: "flat" | "faded" | "bordered";
   division: string;
@@ -42,6 +45,7 @@ export type VehiclePropsType = {
   setVehicle: React.Dispatch<React.SetStateAction<string>>;
 };
 
+// ── Profile ───────────────────────────────────────────────────────────────────
 export type ProfileFormType = {
   name: string;
   number: string;
@@ -54,6 +58,7 @@ export type OnCloseProps = {
   onClose: () => void;
 };
 
+// ── Parcel update (recipient fields only) ────────────────────────────────────
 export type ParcelFormType = {
   name: string;
   email: string;
@@ -62,6 +67,19 @@ export type ParcelFormType = {
   description: string;
 };
 
+// ── Parcel create (full form) ─────────────────────────────────────────────────
+export type ParcelDataType = {
+  address: string;
+  email: string;
+  name: string;
+  number: string;
+  /** String from the weight <Select> — e.g. "0.5", "5" */
+  quantity: string;
+  weight: string;
+  description: string;
+};
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
 export type ModalFormProps = {
   onClose: () => void;
   id: string;

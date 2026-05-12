@@ -1,25 +1,23 @@
 "use client";
-
 import { useAuth } from "@/hooks/useAuth";
+import { getDashboardPath } from "@/lib/constants";
 import Loading from "@/ui/Loading";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-const DashboardHomePage = () => {
+export default function DashboardRootPage() {
   const { role, loading } = useAuth();
+  const router = useRouter();
 
-  if (loading) {
-    return (
-      <div className="grid place-items-center h-screen">
-        <Loading size="lg" />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!loading) {
+      router.replace(role ? getDashboardPath(role) : "/login");
+    }
+  }, [role, loading, router]);
 
-  if (role) {
-    redirect(`/dashboard/${role}`);
-  } else {
-    redirect("/login");
-  }
-};
-
-export default DashboardHomePage;
+  return (
+    <div className="grid place-items-center h-[60vh]">
+      <Loading size="lg" />
+    </div>
+  );
+}

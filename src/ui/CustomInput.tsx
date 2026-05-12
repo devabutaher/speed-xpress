@@ -1,7 +1,20 @@
-import { CustomInputProps } from "@/types/InputType";
 import { Input } from "@nextui-org/react";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 
-const CustomInput = ({
+interface CustomInputProps<T extends FieldValues> {
+  label: React.ReactNode;
+  name: string;
+  register: UseFormRegister<T>;
+  error?: Record<string, any>;
+  defaultValue?: string;
+  variant?: "bordered" | "flat" | "faded";
+  radius?: "none" | "sm" | "md" | "lg" | "full";
+  type?: string;
+  validationRules?: Record<string, any>;
+  endContent?: React.ReactNode;
+}
+
+function CustomInput<T extends FieldValues>({
   label,
   name,
   register,
@@ -12,26 +25,36 @@ const CustomInput = ({
   type = "text",
   endContent,
   validationRules = {},
-}: CustomInputProps) => {
-  const isRequired = validationRules.required;
+}: CustomInputProps<T>) {
+  const isRequired = !!validationRules.required;
+  const hasError = !!error?.[name];
+  const errorMessage = hasError ? String(error[name]?.message ?? "") : "";
+
   return (
     <Input
-      {...register(name, validationRules)}
+      {...register(name as any, validationRules)}
       label={
-        <p>
+        <span className="flex items-center gap-0.5">
           {label}
-          {isRequired && <span className="text-danger">*</span>}
-        </p>
+          {isRequired && (
+            <span className="text-danger text-sm" aria-hidden="true">
+              *
+            </span>
+          )}
+        </span>
       }
       defaultValue={defaultValue}
       variant={variant}
       radius={radius}
       type={type}
-      isInvalid={error?.[name] ? true : false}
-      errorMessage={error?.[name] && `${error[name]?.message}`}
+      isInvalid={hasError}
+      errorMessage={errorMessage}
       endContent={endContent}
+      classNames={{
+        errorMessage: "text-xs mt-0.5",
+      }}
     />
   );
-};
+}
 
 export default CustomInput;

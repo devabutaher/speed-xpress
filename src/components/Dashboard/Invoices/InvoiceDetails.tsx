@@ -1,121 +1,141 @@
-import { InvoiceType } from "@/types/invoiceType";
-import { Chip, Divider } from "@nextui-org/react";
+"use client";
 
+import { staggerContainer, staggerItem } from "@/lib/motion";
+import { formatCurrency } from "@/lib/utils";
+import { InvoiceType } from "@/types/invoiceType";
+import { Chip, Divider, Snippet } from "@nextui-org/react";
+import { motion } from "framer-motion";
+
+// ── Shared field primitive (mirrors ParcelDetails) ────────────────────────────
+const Field = ({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value?: string | null;
+  mono?: boolean;
+}) => (
+  <div className="space-y-0.5">
+    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+      {label}
+    </p>
+    <p
+      className={`text-base font-medium capitalize ${mono ? "font-mono normal-case" : ""}`}
+    >
+      {value || "—"}
+    </p>
+  </div>
+);
+
+const InfoCard = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <motion.div
+    variants={staggerItem}
+    className="space-y-4 p-6 sm:p-8 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl"
+  >
+    <h2 className="text-base font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+      {title}
+    </h2>
+    <Divider />
+    <div className="space-y-4">{children}</div>
+  </motion.div>
+);
+
+// ── Main component ────────────────────────────────────────────────────────────
 const InvoiceDetails = ({ invoiceData }: { invoiceData: InvoiceType }) => {
-  const [date, time] = invoiceData?.paymentDateTime.split(", ");
+  const [date, time] = (invoiceData?.paymentDateTime ?? "").split(", ");
 
   return (
-    <div className="grid md:grid-cols-2 gap-4 lg:gap-8">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="grid md:grid-cols-2 gap-5"
+    >
       {/* User info */}
-      <div className="space-y-4 p-6 sm:p-8 dark:bg-gray-900 bg-gray-200 rounded-lg">
-        <h1 className="text-xl font-medium">USER INFO</h1>
-        <Divider />
-        <div>
-          <label htmlFor="name" className="text-sm">
-            Name:
-          </label>
-          <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-            {invoiceData?.userName || ""}
-          </h1>
+      <InfoCard title="User Info">
+        <Field label="Name" value={invoiceData?.userName} />
+        <Field label="Email" value={invoiceData?.userEmail} mono />
+        <div className="space-y-0.5">
+          <p className="text-xs text-gray-500 uppercase tracking-wide">Role</p>
+          <p className="text-sm font-bold uppercase text-primary">
+            {invoiceData?.userRole ?? "—"}
+          </p>
         </div>
-        <div>
-          <label htmlFor="email" className="text-sm">
-            Email:
-          </label>
-          <h1 className="text-lg sm:text-xl">{invoiceData?.userEmail || ""}</h1>
+        <div className="space-y-0.5">
+          <p className="text-xs text-gray-500 uppercase tracking-wide">
+            Parcel ID
+          </p>
+          <Snippet variant="flat" radius="sm" symbol="" size="sm">
+            {invoiceData?.parcelId ?? "—"}
+          </Snippet>
         </div>
-        <div>
-          <label htmlFor="role" className="text-sm">
-            User Role:
-          </label>
-          <h1 className="text-lg sm:text-xl uppercase">
-            {invoiceData?.userRole || ""}
-          </h1>
-        </div>
-        <div>
-          <label htmlFor="parcel id" className="text-sm">
-            Parcel ID:
-          </label>
-          <h1 className="text-lg sm:text-xl">{invoiceData?.parcelId || ""}</h1>
-        </div>
-      </div>
+      </InfoCard>
 
-      {/* Invoice info */}
-      <div className="space-y-4 p-6 sm:p-8 dark:bg-gray-900 bg-gray-200 rounded-lg">
-        <h1 className="text-xl font-medium">PAYMENT INFO</h1>
-        <Divider />
-        <div>
-          <label htmlFor="id" className="text-sm">
-            Invoice ID:
-          </label>
-          <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-            {invoiceData?.invoiceId || ""}
-          </h1>
+      {/* Payment info */}
+      <InfoCard title="Payment Info">
+        <div className="space-y-0.5">
+          <p className="text-xs text-gray-500 uppercase tracking-wide">
+            Invoice ID
+          </p>
+          <Snippet variant="flat" radius="sm" symbol="" size="sm">
+            {invoiceData?.invoiceId ?? "—"}
+          </Snippet>
         </div>
-        <div className="grid grid-cols-2">
-          <div>
-            <label htmlFor="date" className="text-sm">
-              Date:
-            </label>
-            <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-              {date || ""}
-            </h1>
-          </div>
-          <div>
-            <label htmlFor="time" className="text-sm">
-              Time:
-            </label>
-            <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-              {time || ""}
-            </h1>
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Date" value={date} />
+          <Field label="Time" value={time} />
         </div>
-        <div className="grid grid-cols-2">
-          <div>
-            <label htmlFor="method" className="text-sm">
-              Payment Method:
-            </label>
-            <div>
-              <Chip variant="bordered">
-                <h1 className="sm:text-lg whitespace-nowrap capitalize">
-                  {invoiceData?.paymentMethod || ""}
-                </h1>
-              </Chip>
-            </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-0.5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">
+              Method
+            </p>
+            <Chip variant="flat" size="sm" className="capitalize">
+              {invoiceData?.paymentMethod ?? "—"}
+            </Chip>
           </div>
-          <div>
-            <label htmlFor="status" className="text-sm">
-              Invoice Status:
-            </label>
-            <div>
-              <Chip variant="bordered">
-                <h1 className="sm:text-lg whitespace-nowrap capitalize">
-                  {invoiceData?.status || ""}
-                </h1>
-              </Chip>
-            </div>
+          <div className="space-y-0.5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">
+              Status
+            </p>
+            <Chip
+              variant="flat"
+              color={invoiceData?.status === "paid" ? "success" : "default"}
+              size="sm"
+              className="capitalize"
+            >
+              {invoiceData?.status ?? "—"}
+            </Chip>
           </div>
         </div>
-        <div className="grid grid-cols-2">
-          <div>
-            <label htmlFor="currency" className="text-sm">
-              Currency:
-            </label>
-            <h1 className="text-lg sm:text-xl whitespace-nowrap uppercase">
-              {invoiceData?.currency || ""}
-            </h1>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-0.5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">
+              Currency
+            </p>
+            <p className="text-sm font-bold uppercase">
+              {invoiceData?.currency ?? "—"}
+            </p>
           </div>
-          <div>
-            <label htmlFor="amount" className="text-sm">
-              Amount:
-            </label>
-            <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-              ${invoiceData?.amount || ""}
-            </h1>
+          <div className="space-y-0.5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">
+              Amount
+            </p>
+            {/* Was hardcoded "$" — now uses proper BDT formatting */}
+            <p className="text-xl font-bold text-primary">
+              {formatCurrency(invoiceData?.amount ?? 0, "BDT")}
+            </p>
           </div>
         </div>
-      </div>
-    </div>
+      </InfoCard>
+    </motion.div>
   );
 };
 

@@ -23,5 +23,8 @@ export type ButtonProps = {
   isDisabled?: boolean;
   fullWidth?: boolean;
   type?: "button" | "submit" | "reset";
-  onClick?: (...args: any[]) => void;
+  /** Properly typed — was `(...args: any[]) => void` */
+  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
+  /** Accessibility label for icon-only buttons */
+  "aria-label"?: string;
 };

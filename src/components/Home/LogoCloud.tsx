@@ -1,60 +1,61 @@
+"use client";
+
+import {
+  fadeUp,
+  inViewProps,
+  staggerContainer,
+  staggerItem,
+} from "@/lib/motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
+
+const partners = [
+  {
+    src: "/assets/images/logo/ajkerdeal.png",
+    alt: "Ajker Deal",
+    width: "w-36",
+  },
+  { src: "/assets/images/logo/paperfly.png", alt: "Paperfly", width: "w-40" },
+  { src: "/assets/images/logo/daraz.png", alt: "Daraz", width: "w-32" },
+  { src: "/assets/images/logo/pathao.png", alt: "Pathao", width: "w-32" },
+  { src: "/assets/images/logo/redx.png", alt: "RedX", width: "w-32" },
+];
 
 const LogoCloud = () => {
   return (
-    <div className="max-w-screen-xl mx-auto px-4 pb-20 space-y-10">
-      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold capitalize text-center">
+    <section className="container-xl pb-20 space-y-10">
+      <motion.h2
+        {...inViewProps}
+        variants={fadeUp}
+        className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center"
+      >
         Our Awesome <span className="text-primary">Partners</span>
-      </h1>
+      </motion.h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div className="rounded-lg bg-white dark:bg-gray-900 py-2 px-4 flex items-center justify-center shadow-lg">
-          <Image
-            src={"/assets/images/logo/ajkerdeal.png"}
-            className="w-40 h-18 contrast-200"
-            width={600}
-            height={600}
-            alt="logo"
-          />
-        </div>
-        <div className="rounded-lg bg-white dark:bg-gray-900 py-2 px-4 flex items-center justify-center shadow-lg">
-          <Image
-            src={"/assets/images/logo/paperfly.png"}
-            className="w-48 h-18"
-            width={600}
-            height={600}
-            alt="logo"
-          />
-        </div>
-        <div className="rounded-lg bg-white dark:bg-gray-900 py-2 px-4 flex items-center justify-center shadow-lg">
-          <Image
-            src={"/assets/images/logo/daraz.png"}
-            className="w-40 h-16"
-            width={600}
-            height={600}
-            alt="logo"
-          />
-        </div>
-        <div className="rounded-lg bg-white dark:bg-gray-900 py-2 px-4 flex items-center justify-center shadow-lg">
-          <Image
-            src={"/assets/images/logo/pathao.png"}
-            className="w-40 h-18 contrast-200"
-            width={600}
-            height={600}
-            alt="logo"
-          />
-        </div>
-        <div className="rounded-lg bg-white dark:bg-gray-900 py-2 px-4 flex items-center justify-center shadow-lg">
-          <Image
-            src={"/assets/images/logo/redx.png"}
-            className="w-40 h-16 contrast-200"
-            width={600}
-            height={600}
-            alt="logo"
-          />
-        </div>
-      </div>
-    </div>
+      <motion.div
+        variants={staggerContainer}
+        {...inViewProps}
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+      >
+        {partners.map(({ src, alt, width }) => (
+          <motion.div
+            key={alt}
+            variants={staggerItem}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 py-5 px-4 flex items-center justify-center shadow-card hover:shadow-card-hover transition-shadow duration-300"
+          >
+            <Image
+              src={src}
+              className={`${width} h-auto object-contain`}
+              width={300}
+              height={100}
+              alt={alt}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
+    </section>
   );
 };
 

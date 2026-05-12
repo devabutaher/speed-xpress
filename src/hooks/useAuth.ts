@@ -1,18 +1,19 @@
 import { AuthContext } from "@/providers/AuthProvider";
+import { AuthContextType } from "@/types/AuthContextType";
 import { useContext } from "react";
 
-let logOutFunction: () => void;
+let _logOut: AuthContextType["logOut"];
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
 
-  if (!context) {
+  if (!context || Object.keys(context).length === 0) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
 
-  logOutFunction = context.logOut;
+  _logOut = context.logOut;
 
   return context;
 };
 
-export const getLogOutFunction = () => logOutFunction;
+export const getLogOutFunction = (): AuthContextType["logOut"] => _logOut;

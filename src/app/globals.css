@@ -2,32 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  1. Use a more-intuitive box-sizing model.
-*/
+:root {
+  --surface-light: #f3f4f6;
+  --surface-dark: #030712;
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-secondary: #93c5fd;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
-/*
-  2. Remove default margin
-*/
+
 * {
   margin: 0;
 }
-/*
-  Typographic tweaks!
-  3. Add accessible line-height
-  4. Improve text rendering
-*/
+
 body {
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-/*
-  5. Improve media defaults
-*/
+
 img,
 picture,
 video,
@@ -36,18 +39,14 @@ svg {
   display: block;
   max-width: 100%;
 }
-/*
-  6. Remove built-in form typography styles
-*/
+
 input,
 button,
 textarea,
 select {
   font: inherit;
 }
-/*
-  7. Avoid text overflows
-*/
+
 p,
 h1,
 h2,
@@ -57,31 +56,191 @@ h5,
 h6 {
   overflow-wrap: break-word;
 }
-/*
-  8. Create a root stacking context
-*/
+
 #root,
 #__next {
   isolation: isolate;
 }
-/*
-  9. Create a custom scrollbar
-*/
-body::-webkit-scrollbar {
-  width: 8px;
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-body::-webkit-scrollbar-track {
-  border-radius: 100vh;
-  background: #252525;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-body::-webkit-scrollbar-thumb {
-  background: #0da2e7;
-  border-radius: 100vh;
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 9999px;
+  transition: background var(--duration-fast);
 }
 
-@page {
-  size: auto;
-  margin: 20mm;
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: #3b82f6;
+  color: #f3f4f6;
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700;
+  }
+
+  .text-gradient-brand {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#3b82f6] to-[#93c5fd];
+  }
+
+  .glass {
+    @apply backdrop-blur-md bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border border-gray-200/50 dark:border-gray-700/50;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-gray-200 dark:bg-gray-800 rounded;
+  }
+
+  .skeleton::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24 px-4 md:px-6;
+  }
+
+  .container-xl {
+    @apply max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8;
+  }
+
+  .nav-link {
+    @apply relative text-dark dark:text-light hover:text-primary transition-colors duration-200;
+  }
+
+  .nav-link::after {
+    content: "";
+    @apply absolute -bottom-0.5 left-0 h-0.5 w-full bg-primary origin-left scale-x-0 transition-transform duration-200;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply scale-x-100;
+  }
+
+  .nav-link.active {
+    @apply text-primary;
+  }
+
+  .card-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
+  }
+
+  .live-dot {
+    @apply relative inline-flex h-2 w-2;
+  }
+
+  .live-dot::before {
+    content: "";
+    @apply absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping;
+  }
+
+  .live-dot::after {
+    content: "";
+    @apply relative inline-flex h-2 w-2 rounded-full bg-green-500;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .font-bangla {
+    font-family: var(--font-hind), sans-serif;
+  }
+}
+
+@layer components {
+  .dashboard-card {
+    @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-card;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .status-pending {
+    @apply status-badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400;
+  }
+
+  .status-active {
+    @apply status-badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+  }
+
+  .status-cancelled {
+    @apply status-badge bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+  }
+
+  .status-delivered {
+    @apply status-badge bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm 20mm;
+  }
+
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .dashboard-card {
+    break-inside: avoid;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }

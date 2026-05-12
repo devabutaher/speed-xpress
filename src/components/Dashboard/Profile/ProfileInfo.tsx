@@ -1,73 +1,52 @@
 "use client";
-
 import { useUserInfo } from "@/hooks/useUserInfo";
+import { useTranslation } from "@/lib/i18n";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 import Loading from "@/ui/Loading";
+import { motion } from "framer-motion";
+
+const Field = ({ label, value }: { label: string; value?: string | null }) => (
+  <motion.div variants={staggerItem} className="space-y-1">
+    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+      {label}
+    </p>
+    <p className="text-base font-medium capitalize">{value || "—"}</p>
+  </motion.div>
+);
 
 const ProfileInfo = () => {
+  const t = useTranslation();
   const { isLoading, userInfo } = useUserInfo();
 
+  if (isLoading)
+    return (
+      <div className="grid place-items-center h-40">
+        <Loading size="lg" />
+      </div>
+    );
+
   return (
-    <div>
-      {isLoading ? (
-        <div className="grid place-items-center h-40">
-          <Loading size="lg" />
-        </div>
-      ) : (
-        <div className="grid sm:grid-cols-2 sm:gap-8 gap-4">
-          <div>
-            <label htmlFor="name" className="text-sm">
-              Name
-            </label>
-            <h1 className="text-lg sm:text-xl capitalize">{userInfo?.name}</h1>
-          </div>
-          <div>
-            <label htmlFor="email" className="text-sm">
-              Email
-            </label>
-            <h1 className="text-lg sm:text-xl">{userInfo?.email}</h1>
-          </div>
-          <div>
-            <label htmlFor="number" className="text-sm">
-              Number
-            </label>
-            <h1 className="text-lg sm:text-xl">{userInfo?.number}</h1>
-          </div>
-          <div>
-            <label htmlFor="address" className="text-sm">
-              Address
-            </label>
-            <h1 className="text-lg sm:text-xl capitalize">
-              {userInfo?.address}
-            </h1>
-          </div>
-          <div>
-            <label htmlFor="division" className="text-sm">
-              Division
-            </label>
-            <h1 className="text-lg sm:text-xl capitalize">
-              {userInfo?.division}
-            </h1>
-          </div>
-          <div>
-            <label htmlFor="district" className="text-sm">
-              District
-            </label>
-            <h1 className="text-lg sm:text-xl capitalize">
-              {userInfo?.district}
-            </h1>
-          </div>
-          <div>
-            <label htmlFor="account" className="text-sm">
-              Account
-            </label>
-            <h1 className="text-lg sm:text-xl uppercase text-primary font-semibold">
-              {userInfo?.role}
-            </h1>
-          </div>
-        </div>
-      )}
-    </div>
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="grid sm:grid-cols-2 gap-6"
+    >
+      <Field label={t.common.name} value={userInfo?.name} />
+      <Field label={t.common.email} value={userInfo?.email} />
+      <Field label={t.common.phone} value={userInfo?.number} />
+      <Field label={t.common.address} value={userInfo?.address} />
+      <Field label="Division" value={userInfo?.division} />
+      <Field label="District" value={userInfo?.district} />
+      <motion.div variants={staggerItem} className="space-y-1">
+        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          Account type
+        </p>
+        <p className="text-base font-bold uppercase text-primary">
+          {userInfo?.role}
+        </p>
+      </motion.div>
+    </motion.div>
   );
 };
-
 export default ProfileInfo;

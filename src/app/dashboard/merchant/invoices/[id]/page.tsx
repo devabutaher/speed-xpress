@@ -1,33 +1,31 @@
+"use client";
 import InvoiceDetails from "@/components/Dashboard/Invoices/InvoiceDetails";
-import { getSingleInvoice } from "@/utils/api/invoice";
-import { Divider } from "@nextui-org/react";
-import Image from "next/image";
+import Loading from "@/ui/Loading";
+import SecondaryButton from "@/ui/SecondaryButton";
+import { useRouter } from "next/navigation";
 
-const InvoiceDetailsPage = async ({ params }: { params: { id: string } }) => {
-  const invoiceResponse = await getSingleInvoice(params.id);
+export default function InvoiceDetailPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  // TODO: Add useSingleInvoice hook when available
+  // const { data, isLoading } = useSingleInvoice(params.id);
+
+  const isLoading = false;
+  const data = null;
 
   return (
-    <div className="lg:py-20 py-10 px-6 max-w-screen-xl mx-auto space-y-8">
-      <h1 className="font-bold text-4xl">
-        <span className="text-primary">PARCEL</span> DETAILS
-      </h1>
-      <Divider />
-      {invoiceResponse.code === "success" && invoiceResponse.data !== null ? (
-        <InvoiceDetails invoiceData={invoiceResponse.data} />
-      ) : (
-        <div className="grid place-items-center">
-          <Image
-            className="w-[30rem]"
-            src={"/assets/images/no_data.png"}
-            width={600}
-            height={600}
-            alt="no data"
-          />
-          <h1 className="text-xl font-bold">CANNOT GET INVOICE DATA</h1>
-        </div>
-      )}
+    <div className="container-xl py-10 lg:py-16 space-y-8">
+      <div className="flex items-center gap-4">
+        <SecondaryButton size="sm" onClick={() => router.back()}>← Back</SecondaryButton>
+        <h1 className="font-bold text-3xl lg:text-4xl">
+          INVOICE <span className="text-primary">DETAILS</span>
+        </h1>
+      </div>
+      {isLoading
+        ? <div className="grid place-items-center h-60"><Loading size="lg" /></div>
+        : data
+          ? <InvoiceDetails invoiceData={data} />
+          : <p className="text-gray-500">Invoice not found.</p>
+      }
     </div>
   );
-};
-
-export default InvoiceDetailsPage;
+}

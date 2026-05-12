@@ -1,3 +1,5 @@
+import { QUERY_KEYS, ROLES } from "@/lib/constants";
+import { InvoiceType } from "@/types/invoiceType";
 import { getAllInvoice, getInvoiceByEmail } from "@/utils/api/invoice";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
@@ -5,32 +7,21 @@ import { useAuth } from "./useAuth";
 export const useInvoice = () => {
   const { user, role } = useAuth();
 
-  // Get invoices by email
   const {
-    data: invoices = [],
+    data: invoices = [] as InvoiceType[],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["invoices"],
-    queryFn: async () => {
-      if (user?.email && role) {
-        if (role !== "admin") {
-          const invoiceResponse = await getInvoiceByEmail(user.email);
-          if (invoiceResponse.code === "success") {
-            return invoiceResponse.data || [];
-          } else {
-            console.error(invoiceResponse.error);
-          }
-        } else {
-          const invoiceResponse = await getAllInvoice();
-          if (invoiceResponse.code === "success") {
-            return invoiceResponse.data || [];
-          } else {
-            console.error(invoiceResponse.error);
-          }
-        }
-      }
-      return [];
+    queryKey: QUERY_KEYS.invoices(user?.email ?? undefined),
+    enabled: !!user?.email && !!role,
+    queryFn: async (): Promise<InvoiceType[]> => {
+      const response =
+        role === ROLES.ADMIN
+          ? await getAllInvoice()
+          : await getInvoiceByEmail(user!.email!);
+
+      if (response.code === "success") return response.data ?? [];
+      throw new Error("Failed to fetch invoices");
     },
   });
 

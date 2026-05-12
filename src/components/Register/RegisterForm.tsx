@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import { Role } from "@/lib/constants";
 import { RegisterFormType, RegisterUserDataType } from "@/types/FormTypes";
 import { ShopType } from "@/types/ShopType";
 import CustomInput from "@/ui/CustomInput";
@@ -17,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-const RegisterForm = ({ role }: { role: string }) => {
+const RegisterForm = ({ role }: { role: Role }) => {
   const { googleSignIn, registerUser, loading } = useAuth();
 
   const [isVisible, setIsVisible] = useState<boolean>(false);

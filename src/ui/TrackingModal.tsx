@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { TrackingModalType } from "@/types/ModalType";
 import { Status } from "@/types/ParcelType";
 import {
@@ -11,184 +12,214 @@ import {
   ModalHeader,
   Progress,
 } from "@nextui-org/react";
-import { FaParachuteBox } from "react-icons/fa";
+import { motion } from "framer-motion";
 import {
+  MdCheck,
   MdDirectionsBike,
+  MdLocalShipping,
   MdOutlineCreateNewFolder,
-  MdOutlinePendingActions,
   MdOutlineWarehouse,
 } from "react-icons/md";
 import PrimaryButton from "./PrimaryButton";
 import SecondaryButton from "./SecondaryButton";
 
+// ── Tracking step config ──────────────────────────────────────────────────────
+const STEPS = [
+  { status: Status.Pending, icon: MdOutlineCreateNewFolder, label: "Created" },
+  { status: Status.Accepted, icon: MdOutlineWarehouse, label: "Accepted" },
+  { status: Status.Picked, icon: MdDirectionsBike, label: "Picked Up" },
+  { status: Status.Delivered, icon: MdCheck, label: "Delivered" },
+] as const;
+
+const STATUS_PROGRESS: Partial<Record<Status, number>> = {
+  [Status.Pending]: 25,
+  [Status.Accepted]: 50,
+  [Status.Picked]: 75,
+  [Status.Delivered]: 100,
+};
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+const DetailRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) => (
+  <div className="space-y-1">
+    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+      {label}
+    </p>
+    <div className="font-medium capitalize">{value ?? "—"}</div>
+  </div>
+);
+
+// ── Main component ────────────────────────────────────────────────────────────
 const TrackingModal = ({ onOpenChange, isOpen, parcel }: TrackingModalType) => {
   let date = "";
   let time = "";
 
-  const deliveryDateTime = parcel?.deliveryDateTime;
-
-  if (deliveryDateTime) {
-    [date, time] = deliveryDateTime.split(", ") as string[];
+  if (parcel?.deliveryDateTime) {
+    [date, time] = parcel.deliveryDateTime.split(", ");
   }
 
+  const progressValue = parcel?.parcelStatus
+    ? (STATUS_PROGRESS[parcel.parcelStatus] ?? 0)
+    : 0;
+
   return (
-    <Modal size="2xl" isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent className="p-4">
+    <Modal
+      size="2xl"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      motionProps={{
+        variants: {
+          enter: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
+          exit: { opacity: 0, scale: 0.97, transition: { duration: 0.15 } },
+        },
+      }}
+      classNames={{
+        base: "rounded-2xl",
+        backdrop: "backdrop-blur-sm",
+      }}
+    >
+      <ModalContent className="p-2">
         {(onClose) => (
           <>
-            <ModalHeader className="flex justify-between gap-2">
-              <h1>
-                <span className="font-normal">Parcel ID: </span>
-                {parcel?.parcelId ?? ""}
-              </h1>
-              <h1>
-                <span className="font-normal">Date: </span> {date ?? ""}
-              </h1>
+            {/* ── Header ── */}
+            <ModalHeader className="flex flex-wrap items-center justify-between gap-2 pb-2">
+              <div>
+                <p className="text-xs text-gray-500 font-normal">Parcel ID</p>
+                <p className="text-base font-bold font-mono">
+                  {parcel?.parcelId ?? "—"}
+                </p>
+              </div>
+              {date && (
+                <div className="text-right">
+                  <p className="text-xs text-gray-500 font-normal">Date</p>
+                  <p className="text-sm font-semibold">{date}</p>
+                </div>
+              )}
             </ModalHeader>
-            <ModalBody>
+
+            <ModalBody className="gap-4 pb-4">
               <Divider />
-              <Progress
-                isStriped
-                aria-label="Status..."
-                color="primary"
-                value={
-                  parcel?.parcelStatus === Status.Pending
-                    ? 25
-                    : parcel?.parcelStatus === Status.Accepted
-                    ? 50
-                    : parcel?.parcelStatus === Status.Picked
-                    ? 75
-                    : parcel?.parcelStatus === Status.Delivered
-                    ? 100
-                    : 0
-                }
-                className="w-full"
-              />
-              <div className="flex gap-2 text-2xl justify-between px-2">
-                <MdOutlineCreateNewFolder
-                  className={`${
-                    parcel?.parcelStatus === Status.Pending && "text-primary"
-                  }`}
+
+              {/* ── Progress bar ── */}
+              <div className="space-y-3">
+                <Progress
+                  isStriped
+                  aria-label="Delivery progress"
+                  color="primary"
+                  value={progressValue}
+                  className="w-full"
+                  size="sm"
                 />
-                <MdOutlinePendingActions
-                  className={`${
-                    parcel?.parcelStatus === Status.Pending && "text-primary"
-                  }`}
+
+                {/* ── Step icons ── */}
+                <div className="flex justify-between px-1">
+                  {STEPS.map(({ status, icon: Icon, label }) => {
+                    const isActive =
+                      progressValue >= (STATUS_PROGRESS[status as Status] ?? 0);
+                    return (
+                      <motion.div
+                        key={status}
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="flex flex-col items-center gap-1"
+                      >
+                        <div
+                          className={cn(
+                            "p-2 rounded-full transition-colors duration-300",
+                            isActive
+                              ? "bg-primary text-white"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-400",
+                          )}
+                        >
+                          <Icon size={20} />
+                        </div>
+                        <span className="text-xs text-gray-500 hidden sm:block">
+                          {label}
+                        </span>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <Divider />
+
+              {/* ── Parcel details grid ── */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                <DetailRow label="Sender" value={parcel?.senderInfo?.name} />
+                <DetailRow
+                  label="Receiver"
+                  value={parcel?.recipientInfo?.name}
                 />
-                <MdOutlineWarehouse
-                  className={`${
-                    parcel?.parcelStatus === Status.Accepted && "text-primary"
-                  }`}
+                <DetailRow
+                  label="From"
+                  value={parcel?.senderInfo?.address?.district}
                 />
-                <MdDirectionsBike
-                  className={`${
-                    parcel?.parcelStatus === Status.Picked && "text-primary"
-                  }`}
+                <DetailRow
+                  label="To"
+                  value={parcel?.recipientInfo?.address?.district}
                 />
-                <FaParachuteBox
-                  className={`${
-                    parcel?.parcelStatus === Status.Delivered && "text-primary"
-                  }`}
+                <DetailRow
+                  label="Payment"
+                  value={parcel?.paymentInfo?.method}
+                />
+                <DetailRow
+                  label="Amount"
+                  value={
+                    parcel?.paymentInfo?.amount != null
+                      ? `৳${parcel.paymentInfo.amount}`
+                      : null
+                  }
+                />
+                <DetailRow
+                  label="Status"
+                  value={
+                    <Chip
+                      variant="flat"
+                      color="primary"
+                      size="sm"
+                      className="capitalize"
+                    >
+                      {parcel?.parcelStatus ?? "—"}
+                    </Chip>
+                  }
+                />
+                <DetailRow
+                  label="Shipping"
+                  value={
+                    <Chip variant="flat" size="sm" className="capitalize">
+                      {parcel?.shippingMethod ?? "—"}
+                    </Chip>
+                  }
                 />
               </div>
 
-              {/* Parcel details */}
-              <div className="space-y-4 rounded-lg py-4">
-                <div className="grid grid-cols-2">
-                  <div>
-                    <label htmlFor="sender name" className="text-sm">
-                      Sender:
-                    </label>
-                    <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-                      {parcel?.senderInfo?.name ?? ""}
-                    </h1>
-                  </div>
-                  <div>
-                    <label htmlFor="receiver address" className="text-sm">
-                      Receiver:
-                    </label>
-                    <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-                      {parcel?.recipientInfo?.name ?? ""}
-                    </h1>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2">
-                  <div>
-                    <label htmlFor="sender address" className="text-sm">
-                      Address:
-                    </label>
-                    <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-                      {parcel?.senderInfo?.address?.district ?? ""}
-                    </h1>
-                  </div>
-                  <div>
-                    <label htmlFor="receiver address" className="text-sm">
-                      Address:
-                    </label>
-                    <h1 className="text-lg sm:text-xl whitespace-nowrap capitalize">
-                      {parcel?.recipientInfo?.address?.district ?? ""}
-                    </h1>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2">
-                  <div>
-                    <label htmlFor="payment method" className="text-sm">
-                      Payment:
-                    </label>
-                    <div>
-                      <h1 className="sm:text-lg whitespace-nowrap capitalize">
-                        {parcel?.paymentInfo?.method ?? ""}
-                      </h1>
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="price" className="text-sm">
-                      Price:
-                    </label>
-                    <div>
-                      <h1 className="sm:text-lg whitespace-nowrap capitalize">
-                        ${parcel?.paymentInfo?.amount ?? ""}
-                      </h1>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2">
-                  <div>
-                    <label htmlFor="parcel status" className="text-sm">
-                      Parcel Status:
-                    </label>
-                    <div>
-                      <Chip variant="bordered">
-                        <h1 className="sm:text-lg whitespace-nowrap capitalize">
-                          {parcel?.parcelStatus ?? ""}
-                        </h1>
-                      </Chip>
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="shipping method" className="text-sm">
-                      Shipping Method:
-                    </label>
-                    <div>
-                      <Chip variant="bordered">
-                        <h1 className="sm:text-lg whitespace-nowrap capitalize">
-                          {parcel?.shippingMethod ?? ""}
-                        </h1>
-                      </Chip>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <Divider />
-              <div className="flex justify-between items-center gap-2">
-                <h1 className="font-semibold text-lg">
-                  <span className="font-normal">Time: </span> {time ?? ""}
-                </h1>
-                <div className="flex gap-2">
-                  <SecondaryButton onClick={onClose}>Close</SecondaryButton>
-                  <PrimaryButton href={`/parcels/${parcel?.parcelId}`}>
-                    More Details
+
+              {/* ── Footer ── */}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                {time && (
+                  <p className="text-sm">
+                    <span className="text-gray-500">Time: </span>
+                    <span className="font-semibold">{time}</span>
+                  </p>
+                )}
+                <div className="flex gap-2 ml-auto">
+                  <SecondaryButton size="sm" onClick={onClose}>
+                    Close
+                  </SecondaryButton>
+                  <PrimaryButton
+                    size="sm"
+                    href={`/parcels/${parcel?.parcelId}`}
+                  >
+                    <MdLocalShipping className="mr-1" />
+                    Details
                   </PrimaryButton>
                 </div>
               </div>

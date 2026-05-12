@@ -3,13 +3,14 @@ import {
   FieldError,
   FieldValues,
   UseFormRegister,
+  FieldPath,
 } from "react-hook-form";
 
-export type CustomInputProps = {
+export type CustomInputProps<T extends FieldValues = FieldValues> = {
   label: React.ReactNode;
-  name: string;
-  register: UseFormRegister<FieldValues>;
-  error?: DeepMap<FieldValues, FieldError>;
+  name: FieldPath<T>;
+  register: UseFormRegister<T>;
+  error?: DeepMap<T, FieldError>;
   variant?: "bordered" | "flat" | "faded";
   radius?: "none" | "sm" | "md" | "lg" | "full";
   type?: string;

@@ -1,13 +1,19 @@
 "use client";
 
-import { columns, statusColorMap, statusOptions } from "@/data/parcelData";
-import { useParcel } from "@/hooks/useParcel";
 import {
-  useFilter,
-  usePagination,
-  useVisibleColumns,
-} from "@/hooks/useParcelTable";
+  columns,
+  INITIAL_VISIBLE_COLUMNS,
+  statusColorMap,
+  statusOptions,
+} from "@/data/parcelData";
+import { useAuth } from "@/hooks/useAuth";
+import { useParcel } from "@/hooks/useParcel";
+import { useTableControls } from "@/hooks/useTableControls";
+import { ROLES } from "@/lib/constants";
+import { formatCurrency } from "@/lib/utils";
 import { ParcelType, Status } from "@/types/ParcelType";
+import Loading from "@/ui/Loading";
+import { deleteParcel, updateParcelStatus } from "@/utils/api/parcel";
 import {
   Button,
   Chip,
@@ -27,449 +33,407 @@ import {
   TableRow,
   useDisclosure,
 } from "@nextui-org/react";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
-
-// icons
-import { useAuth } from "@/hooks/useAuth";
-import Loading from "@/ui/Loading";
-import { deleteParcel, updateParcelStatus } from "@/utils/api/parcel";
 import { usePathname, useRouter } from "next/navigation";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { CiSearch as SearchIcon } from "react-icons/ci";
 import { FaChevronDown as ChevronDownIcon } from "react-icons/fa";
 import { HiDotsVertical as VerticalDotsIcon } from "react-icons/hi";
 import { toast } from "react-toastify";
 import ParcelUpdateModal from "./ParcelUpdateModal";
 
-const ParcelTable = ({
-  setEarnings,
-}: {
+interface ParcelTableProps {
   setEarnings?: React.Dispatch<React.SetStateAction<number>>;
-}) => {
-  // hooks
-  let { parcels, isLoading, refetch } = useParcel();
+}
+
+const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
   const { role } = useAuth();
-  const { page, setPage, onNextPage, onPreviousPage } = usePagination();
-  const { filterValue, onSearchChange, onClear } = useFilter();
-  const { visibleColumns, setVisibleColumns } = useVisibleColumns();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const pathname = usePathname();
   const router = useRouter();
 
-  if (role === "rider") {
-    if (
-      pathname.split("/")[3] === "completed-deliveries" ||
-      pathname.split("/")[3] === "earnings"
-    ) {
-      parcels = parcels.filter(
-        (parcel) => parcel.parcelStatus === Status.Delivered
+  let { parcels, isLoading, refetch } = useParcel();
+
+  // ── Rider-specific filtering ────────────────────────────────────────────────
+  if (role === ROLES.RIDER) {
+    const segment = pathname.split("/")[3];
+    const isCompletedOrEarnings =
+      segment === "completed-deliveries" || segment === "earnings";
+
+    if (isCompletedOrEarnings) {
+      parcels = parcels.filter((p) => p.parcelStatus === Status.Delivered);
+      const total = parcels.reduce(
+        (sum, p) => sum + (p.paymentInfo?.amount ?? 0),
+        0,
       );
-
-      const totalAmount = parcels.reduce((accumulator, parcel) => {
-        return accumulator + parcel.paymentInfo.amount;
-      }, 0);
-
-      if (setEarnings) {
-        setEarnings(totalAmount);
-      }
+      setEarnings?.(total);
     } else {
       parcels = parcels.filter(
-        (parcel) =>
-          parcel.parcelStatus === Status.Accepted ||
-          parcel.parcelStatus === Status.Picked
+        (p) =>
+          p.parcelStatus === Status.Accepted ||
+          p.parcelStatus === Status.Picked,
       );
     }
   }
 
-  // states
+  // ── Table controls (replaces 3 separate hooks) ──────────────────────────────
+  const {
+    page,
+    setPage,
+    onNextPage,
+    onPreviousPage,
+    filterValue,
+    onSearchChange,
+    onClearSearch,
+    visibleColumns,
+    setVisibleColumns,
+  } = useTableControls(INITIAL_VISIBLE_COLUMNS);
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [updateId, setUpdateId] = useState<string | null>(null);
 
-  const hasSearchFilter = Boolean(filterValue);
-
+  // ── Computed columns ────────────────────────────────────────────────────────
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
+    return columns.filter((col) =>
+      Array.from(visibleColumns).includes(col.uid),
     );
   }, [visibleColumns]);
 
+  // ── Filtering ───────────────────────────────────────────────────────────────
   const filteredItems = useMemo(() => {
-    let filteredParcels = [...parcels];
+    let result = [...parcels];
 
-    if (hasSearchFilter) {
-      filteredParcels = filteredParcels.filter((parcel) => {
-        const isMatch =
-          (parcel?.recipientInfo?.name &&
-            parcel?.recipientInfo?.name
-              .toLowerCase()
-              .includes(filterValue.toLowerCase())) ||
-          (parcel?.recipientInfo?.email &&
-            parcel?.recipientInfo?.email
-              .toLowerCase()
-              .includes(filterValue.toLowerCase())) ||
-          (parcel?.parcelId &&
-            parcel?.parcelId.toLowerCase().includes(filterValue.toLowerCase()));
-
-        return isMatch;
-      });
+    if (filterValue) {
+      const q = filterValue.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.recipientInfo?.name?.toLowerCase().includes(q) ||
+          p.recipientInfo?.email?.toLowerCase().includes(q) ||
+          p.parcelId?.toLowerCase().includes(q),
+      );
     }
 
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredParcels = filteredParcels.filter((parcel) =>
-        Array.from(statusFilter).includes(parcel?.parcelStatus)
+      result = result.filter((p) =>
+        Array.from(statusFilter).includes(p.parcelStatus),
       );
     }
 
-    return filteredParcels;
-  }, [parcels, hasSearchFilter, statusFilter, filterValue]);
+    return result;
+  }, [parcels, filterValue, statusFilter]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = Math.max(1, Math.ceil(filteredItems.length / rowsPerPage));
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems.slice(start, end);
+    return filteredItems.slice(start, start + rowsPerPage);
   }, [page, filteredItems, rowsPerPage]);
 
+  // ── Action handlers ─────────────────────────────────────────────────────────
+  const handleStatusUpdate = useCallback(
+    async (id: string, status: Status) => {
+      const res = await updateParcelStatus({
+        id,
+        data: { parcelStatus: status },
+      });
+      if (res.code === "success") {
+        refetch();
+      } else {
+        toast.error("Failed to update parcel status");
+      }
+    },
+    [refetch],
+  );
+
+  const handleDelete = useCallback(
+    async (id: string) => {
+      const res = await deleteParcel(id);
+      refetch();
+      if (res.code === "success") {
+        toast.success("Parcel deleted successfully");
+      } else {
+        toast.error("Failed to delete parcel");
+      }
+    },
+    [refetch],
+  );
+
+  const handleView = useCallback(
+    (parcelId: string) => {
+      const path =
+        role === ROLES.RIDER
+          ? `/dashboard/rider/deliveries/${parcelId}`
+          : `/dashboard/${role}/parcels/${parcelId}`;
+      router.push(path);
+    },
+    [role, router],
+  );
+
+  // ── Cell renderer ───────────────────────────────────────────────────────────
   const renderCell = useCallback(
     (parcel: ParcelType, columnKey: string | number): React.ReactNode => {
-      const cellValue = parcel[columnKey as keyof ParcelType];
-      const [date, time] = parcel?.deliveryDateTime.split(", ");
-
-      const handleEdit = (id: string) => {
-        onOpen();
-        setUpdateId(id);
-      };
-
-      const handleAcceptByAdmin = async (id: string) => {
-        const updateResponse = await updateParcelStatus({
-          id,
-          data: { parcelStatus: Status.Accepted },
-        });
-
-        if (updateResponse.code === "success") {
-          refetch();
-        } else {
-          console.error(updateResponse.error);
-        }
-      };
-
-      const handleAcceptByRider = async (id: string) => {
-        const updateResponse = await updateParcelStatus({
-          id,
-          data: { parcelStatus: Status.Picked },
-        });
-
-        if (updateResponse.code === "success") {
-          refetch();
-        } else {
-          console.error(updateResponse.error);
-        }
-      };
-
-      const handleDeliveredByRider = async (id: string) => {
-        const updateResponse = await updateParcelStatus({
-          id,
-          data: { parcelStatus: Status.Delivered },
-        });
-
-        if (updateResponse.code === "success") {
-          refetch();
-        } else {
-          console.error(updateResponse.error);
-        }
-      };
-
-      const handleView = (id: string) => {
-        if (role !== "rider") {
-          router.push(`/dashboard/${role}/parcels/${id}`);
-        } else {
-          router.push(`/dashboard/${role}/deliveries/${id}`);
-        }
-      };
-
-      const handleDelete = async (id: string) => {
-        const response = await deleteParcel(id);
-        refetch();
-
-        if (response.code === "success") {
-          toast.success("Parcel deleted successfully");
-        } else {
-          console.error(response.error);
-        }
-      };
-
-      const handleReturn = async (id: string) => {
-        const updateResponse = await updateParcelStatus({
-          id,
-          data: { parcelStatus: Status.Returned },
-        });
-
-        if (updateResponse.code === "success") {
-          refetch();
-        } else {
-          console.error(updateResponse.error);
-        }
-      };
+      const [date, time] = (parcel.deliveryDateTime ?? "").split(", ");
 
       switch (columnKey) {
         case "id":
           return (
-            <Snippet variant="flat" radius="sm">
-              {parcel?.parcelId}
+            <Snippet variant="flat" radius="sm" symbol="">
+              {parcel.parcelId}
             </Snippet>
           );
+
         case "date":
           return (
             <>
               <p className="text-small whitespace-nowrap">{date}</p>
-              <p className="text-small whitespace-nowrap">{time}</p>
+              <p className="text-small whitespace-nowrap text-default-400">
+                {time}
+              </p>
             </>
           );
+
         case "name":
           return (
             <>
               <p className="font-medium text-small capitalize">
-                {parcel?.recipientInfo?.name}
+                {parcel.recipientInfo?.name}
               </p>
-              <p className="text-tiny text-default-500">
-                {parcel?.recipientInfo?.email}
+              <p className="text-tiny text-default-400">
+                {parcel.recipientInfo?.email}
               </p>
             </>
           );
+
         case "number":
-          return (
-            <p className="font-medium text-small capitalize">
-              {parcel?.recipientInfo?.number}
-            </p>
-          );
+          return <p className="text-small">{parcel.recipientInfo?.number}</p>;
+
         case "shipping":
           return (
             <Chip
               color={
-                parcel?.shippingMethod === "express" ? "primary" : "default"
+                parcel.shippingMethod === "express" ? "primary" : "default"
               }
               size="sm"
               variant="flat"
             >
-              <span className="font-medium capitalize text-small">
-                {parcel?.shippingMethod}
+              <span className="capitalize text-small font-medium">
+                {parcel.shippingMethod}
               </span>
             </Chip>
           );
+
         case "info":
           return (
             <>
-              <p className="text-small capitalize">
+              <p className="text-small">
                 Weight:{" "}
-                <span className="font-medium">{parcel?.parcelWeight} KG</span>
+                <span className="font-medium">{parcel.parcelWeight} kg</span>
               </p>
-              <p className="text-small capitalize">
-                Quantity:{" "}
-                <span className="font-medium">
-                  {parcel?.parcelQuantity} PCS
-                </span>
+              <p className="text-small">
+                Qty:{" "}
+                <span className="font-medium">{parcel.parcelQuantity} pcs</span>
               </p>
             </>
           );
+
         case "payment":
           return (
             <>
               <p className="text-small capitalize whitespace-nowrap">
-                Status:{" "}
-                <span className="font-medium">
-                  {parcel?.paymentInfo.status}
-                </span>
+                {parcel.paymentInfo?.status}
               </p>
-              <p className="text-small capitalize whitespace-nowrap">
-                Amount:{" "}
-                <span className="font-medium">
-                  ${parcel?.paymentInfo.amount}
-                </span>
+              <p className="text-small font-medium whitespace-nowrap">
+                {formatCurrency(parcel.paymentInfo?.amount ?? 0, "BDT")}
               </p>
             </>
           );
+
         case "status":
           return (
             <Chip
-              color={statusColorMap[parcel?.parcelStatus]}
+              color={statusColorMap[parcel.parcelStatus] ?? "default"}
               size="sm"
               variant="flat"
             >
-              <span className="font-medium capitalize text-small">
-                {parcel?.parcelStatus}
+              <span className="capitalize text-small font-medium">
+                {parcel.parcelStatus}
               </span>
             </Chip>
           );
-        case "actions":
+
+        case "actions": {
+          const id = parcel._id ?? "";
+          const parcelId = parcel.parcelId ?? "";
+          const status = parcel.parcelStatus;
+
           return (
-            <div className="relative flex justify-end items-center gap-2">
+            <div className="flex justify-end">
               <Dropdown>
                 <DropdownTrigger>
-                  <Button isIconOnly size="md" variant="light">
-                    <VerticalDotsIcon className="text-default-600" />
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    aria-label="Actions"
+                  >
+                    <VerticalDotsIcon className="text-default-500" />
                   </Button>
                 </DropdownTrigger>
-                <DropdownMenu aria-label="action-items">
+                <DropdownMenu aria-label="Parcel actions">
+                  {/* View */}
                   <DropdownItem
-                    className="text-left"
-                    textValue="view"
-                    as="button"
-                    onClick={() => handleView(`${parcel?.parcelId}`)}
+                    key="view"
+                    textValue="View"
+                    onClick={() => handleView(parcelId)}
                   >
                     View
                   </DropdownItem>
-                  {role !== "rider" ? (
+
+                  {/* Edit — non-rider only */}
+                  {role !== ROLES.RIDER ? (
                     <DropdownItem
-                      className="text-left"
-                      textValue="edit"
-                      as="button"
-                      onClick={() => handleEdit(`${parcel?.parcelId}`)}
+                      key="edit"
+                      textValue="Edit"
+                      onClick={() => {
+                        setUpdateId(parcelId);
+                        onOpen();
+                      }}
                     >
                       Edit
                     </DropdownItem>
                   ) : (
                     <DropdownItem
+                      key="edit-hidden"
                       className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
+                      textValue="-"
+                    />
                   )}
 
-                  {role === "admin" &&
-                  parcel.parcelStatus !== Status.Accepted ? (
+                  {/* Accept — admin only, not yet accepted */}
+                  {role === ROLES.ADMIN && status !== Status.Accepted ? (
                     <DropdownItem
-                      textValue="accept by admin"
-                      className="text-left"
-                      as="button"
-                      onClick={() => handleAcceptByAdmin(`${parcel?._id}`)}
+                      key="accept-admin"
+                      textValue="Accept"
+                      onClick={() => handleStatusUpdate(id, Status.Accepted)}
                     >
                       Accept
                     </DropdownItem>
                   ) : (
                     <DropdownItem
+                      key="accept-admin-hidden"
                       className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
+                      textValue="-"
+                    />
                   )}
 
-                  {role === "rider" &&
-                  parcel.parcelStatus === Status.Accepted &&
-                  // @ts-ignore
-                  parcel.parcelStatus !== Status.Picked ? (
+                  {/* Picked up — rider, parcel accepted */}
+                  {role === ROLES.RIDER && status === Status.Accepted ? (
                     <DropdownItem
-                      textValue="accept by rider"
-                      className="text-left"
-                      as="button"
-                      onClick={() => handleAcceptByRider(`${parcel?._id}`)}
+                      key="picked"
+                      textValue="Mark Picked"
+                      onClick={() => handleStatusUpdate(id, Status.Picked)}
                     >
-                      Picked
+                      Mark Picked
                     </DropdownItem>
                   ) : (
                     <DropdownItem
+                      key="picked-hidden"
                       className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
+                      textValue="-"
+                    />
                   )}
 
-                  {role === "rider" &&
-                  parcel.parcelStatus === Status.Picked &&
-                  // @ts-ignore
-                  parcel.parcelStatus !== Status.Delivered ? (
+                  {/* Delivered — rider, parcel picked */}
+                  {role === ROLES.RIDER && status === Status.Picked ? (
                     <DropdownItem
-                      textValue="delivered"
-                      className="text-left"
-                      as="button"
-                      onClick={() => handleDeliveredByRider(`${parcel?._id}`)}
+                      key="delivered"
+                      textValue="Mark Delivered"
+                      onClick={() => handleStatusUpdate(id, Status.Delivered)}
                     >
-                      Delivered
+                      Mark Delivered
                     </DropdownItem>
                   ) : (
                     <DropdownItem
+                      key="delivered-hidden"
                       className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
+                      textValue="-"
+                    />
                   )}
 
-                  {role === "rider" ? (
+                  {/* Return — non-rider, only after delivery */}
+                  {role !== ROLES.RIDER && status === Status.Delivered ? (
                     <DropdownItem
-                      className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
-                  ) : (
-                    <DropdownItem
-                      textValue="delete"
-                      className="text-left"
-                      as="button"
-                      onClick={() => handleDelete(`${parcel?._id}`)}
-                    >
-                      Delete
-                    </DropdownItem>
-                  )}
-
-                  {role === "rider" ? (
-                    <DropdownItem
-                      className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
-                  ) : parcel.parcelStatus === Status.Delivered ? (
-                    <DropdownItem
-                      textValue="return"
-                      className="text-left"
-                      as="button"
-                      onClick={() => handleReturn(`${parcel?._id}`)}
+                      key="return"
+                      textValue="Return"
+                      onClick={() => handleStatusUpdate(id, Status.Returned)}
                     >
                       Return
                     </DropdownItem>
                   ) : (
                     <DropdownItem
+                      key="return-hidden"
                       className="hidden"
-                      textValue="hidden"
-                    ></DropdownItem>
+                      textValue="-"
+                    />
+                  )}
+
+                  {/* Delete — non-rider only */}
+                  {role !== ROLES.RIDER ? (
+                    <DropdownItem
+                      key="delete"
+                      textValue="Delete"
+                      color="danger"
+                      className="text-danger"
+                      onClick={() => handleDelete(id)}
+                    >
+                      Delete
+                    </DropdownItem>
+                  ) : (
+                    <DropdownItem
+                      key="delete-hidden"
+                      className="hidden"
+                      textValue="-"
+                    />
                   )}
                 </DropdownMenu>
               </Dropdown>
             </div>
           );
+        }
+
         default:
-          return <>{cellValue}</>;
+          return null;
       }
     },
-    [onOpen, refetch, role, router]
+    [handleDelete, handleStatusUpdate, handleView, onOpen, role],
   );
 
-  const onRowsPerPageChange = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
-    },
-    [setPage]
-  );
-
-  const topContent = useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-4 items-end">
+  // ── Top toolbar ─────────────────────────────────────────────────────────────
+  const topContent = useMemo(
+    () => (
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap justify-between gap-3 items-end">
           <Input
             variant="bordered"
             radius="sm"
             isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Search By ID, Name, Email"
-            startContent={<SearchIcon />}
+            className="w-full sm:max-w-xs"
+            placeholder="Search by ID, name, email…"
+            startContent={<SearchIcon className="text-default-400" />}
             value={filterValue}
-            onClear={() => onClear()}
+            onClear={onClearSearch}
             onValueChange={onSearchChange}
           />
-          <div className="hidden sm:flex gap-4">
+          <div className="flex gap-2">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
+                  size="sm"
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
@@ -478,15 +442,15 @@ const ParcelTable = ({
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Table Columns"
+                aria-label="Filter by status"
                 closeOnSelect={false}
                 selectedKeys={statusFilter}
                 selectionMode="multiple"
                 onSelectionChange={setStatusFilter}
               >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {status.name}
+                {statusOptions.map((s) => (
+                  <DropdownItem key={s.uid} className="capitalize">
+                    {s.name}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -494,6 +458,7 @@ const ParcelTable = ({
             <Dropdown>
               <DropdownTrigger>
                 <Button
+                  size="sm"
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
@@ -502,30 +467,34 @@ const ParcelTable = ({
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Table Columns"
+                aria-label="Toggle columns"
                 closeOnSelect={false}
                 selectedKeys={visibleColumns}
                 selectionMode="multiple"
                 onSelectionChange={setVisibleColumns}
               >
-                {columns.slice(1, -1).map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {column.name}
+                {columns.slice(1, -1).map((col) => (
+                  <DropdownItem key={col.uid} className="capitalize">
+                    {col.name}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
             </Dropdown>
           </div>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-500 text-small">
-            Total {parcels.length} Parcels
+        <div className="flex justify-between items-center text-small text-default-500">
+          <span>
+            {filteredItems.length} parcel{filteredItems.length !== 1 ? "s" : ""}
           </span>
-          <label className="flex items-center text-default-500 text-small">
+          <label className="flex items-center gap-1">
             Rows per page:
             <select
               className="bg-transparent outline-none text-default-500 text-small"
-              onChange={onRowsPerPageChange}
+              value={rowsPerPage}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                setRowsPerPage(Number(e.target.value));
+                setPage(1);
+              }}
             >
               <option value="5">5</option>
               <option value="10">10</option>
@@ -534,21 +503,24 @@ const ParcelTable = ({
           </label>
         </div>
       </div>
-    );
-  }, [
-    filterValue,
-    onSearchChange,
-    statusFilter,
-    visibleColumns,
-    setVisibleColumns,
-    parcels.length,
-    onRowsPerPageChange,
-    onClear,
-  ]);
+    ),
+    [
+      filterValue,
+      onSearchChange,
+      onClearSearch,
+      statusFilter,
+      visibleColumns,
+      setVisibleColumns,
+      filteredItems.length,
+      rowsPerPage,
+      setPage,
+    ],
+  );
 
-  const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center">
+  // ── Bottom pagination ───────────────────────────────────────────────────────
+  const bottomContent = useMemo(
+    () => (
+      <div className="py-2 px-2 flex justify-between items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -558,9 +530,9 @@ const ParcelTable = ({
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className="hidden sm:flex gap-2">
           <Button
-            isDisabled={pages === 1}
+            isDisabled={page <= 1}
             size="sm"
             variant="flat"
             onPress={onPreviousPage}
@@ -568,7 +540,7 @@ const ParcelTable = ({
             Previous
           </Button>
           <Button
-            isDisabled={pages === 1}
+            isDisabled={page >= pages}
             size="sm"
             variant="flat"
             onPress={onNextPage}
@@ -577,36 +549,35 @@ const ParcelTable = ({
           </Button>
         </div>
       </div>
-    );
-  }, [page, pages, setPage, onPreviousPage, onNextPage]);
+    ),
+    [page, pages, setPage, onPreviousPage, onNextPage],
+  );
 
   return (
     <>
       <Table
-        aria-label="Example table with custom cells, pagination and sorting"
+        aria-label="Parcels table"
         isHeaderSticky
         radius="sm"
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        classNames={{
-          wrapper: "max-h-[30rem]",
-        }}
         topContent={topContent}
         topContentPlacement="outside"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{ wrapper: "max-h-[32rem]" }}
       >
         <TableHeader columns={headerColumns}>
-          {(column: { name: string; uid: string }) => (
+          {(col) => (
             <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              key={col.uid}
+              align={col.uid === "actions" ? "center" : "start"}
             >
-              {column.name}
+              {col.name}
             </TableColumn>
           )}
         </TableHeader>
         <TableBody
-          emptyContent={isLoading ? <Loading size="lg" /> : "No parcels found"}
           items={items}
+          emptyContent={isLoading ? <Loading size="lg" /> : "No parcels found"}
         >
           {(item) => (
             <TableRow key={item.parcelId}>
@@ -622,6 +593,7 @@ const ParcelTable = ({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         id={updateId}
+        refetch={refetch}
       />
     </>
   );

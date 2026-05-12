@@ -1,27 +1,39 @@
+import { Role } from "@/lib/constants";
 import { useAuth } from "@/hooks/useAuth";
-import { redirect } from "next/navigation";
-import { useLayoutEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-type RoleProps = (role: string | null) => boolean;
+type RoleCheck = (role: Role | null) => boolean;
 
-const usePrivateRoute = (roleCheck: RoleProps) => {
+/**
+ * Guards a page by role. Redirects to /login if not authenticated
+ * or the role check fails.
+ *
+ * Returns `true` when the user is authorised, `null` while loading,
+ * and `false` after a redirect has been issued.
+ *
+ * Usage:
+ * ```tsx
+ * const isAuthorized = usePrivateRoute((role) => role === "admin");
+ * if (!isAuthorized) return null;
+ * ```
+ */
+const usePrivateRoute = (roleCheck: RoleCheck): boolean | null => {
   const { user, role, loading } = useAuth();
+  const router = useRouter();
 
-  useLayoutEffect(() => {
-    if (loading) {
-      return;
-    }
+  const isAuthorized = !loading && !!user && roleCheck(role);
 
+  useEffect(() => {
+    if (loading) return;
     if (!user || !roleCheck(role)) {
-      redirect("/login");
+      router.replace("/login");
     }
-  }, [user, role, loading, roleCheck]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, role, loading]);
 
-  if (!user || !roleCheck(role)) {
-    return null;
-  }
-
-  return true;
+  if (loading) return null;
+  return isAuthorized;
 };
 
 export default usePrivateRoute;

@@ -1,5 +1,9 @@
+"use client";
+
 import { weightData } from "@/data/deliveryData";
 import { useShop } from "@/hooks/useShop";
+import { useTranslation } from "@/lib/i18n";
+import { VALIDATION_PATTERNS } from "@/lib/utils";
 import {
   ParcelDataType,
   ParcelFormProps,
@@ -32,193 +36,196 @@ const ParcelForm = ({
   estimatedTotal,
   userInfo,
 }: ParcelFormProps) => {
-  const { shops, isLoading } = useShop();
-
-  const [district, setDistrict] = useState<string>("Dhaka");
-  const [shop, setShop] = useState<string>("");
-
-  useEffect(() => {
-    if (!isLoading && shops.length > 0) {
-      setShop(shops[0].name);
-    } else {
-      setShop("");
-    }
-  }, [isLoading, shops]);
-
-  const [paymentMethod, setPaymentMethod] = useState<string>("online");
-
+  const t = useTranslation();
+  const { shops, isLoading: shopsLoading } = useShop();
   const router = useRouter();
+
+  const [district, setDistrict] = useState("Dhaka");
+  const [shop, setShop] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("online");
+
+  // Pre-select the merchant's first shop once loaded
+  useEffect(() => {
+    setShop(!shopsLoading && shops.length > 0 ? shops[0].name : "");
+  }, [shopsLoading, shops]);
 
   const {
     register,
     reset,
     handleSubmit,
-    formState: { errors },
-  } = useForm<any>();
+    formState: { errors, isSubmitting },
+  } = useForm<ParcelDataType>();
 
   const handleForm = async (data: ParcelDataType) => {
     const { address, email, name, number, quantity, weight, description } =
       data;
-    const parcelStatus = Status.Pending;
-    const paymentStatus = PaymentStatus.Pending;
 
-    // All of the parcel data
+    // ── Build parcel payload ────────────────────────────────────────────────
     let parcelData: ParcelType = {
       senderInfo: {
-        name: userInfo?.name || "",
-        email: userInfo?.email || "",
-        number: userInfo?.number || "",
+        name: userInfo?.name ?? "",
+        email: userInfo?.email ?? "",
+        number: userInfo?.number ?? "",
         address: {
-          division: userInfo?.division || "",
-          district: userInfo?.district || "",
-          address: userInfo?.address || "",
+          division: userInfo?.division ?? "",
+          district: userInfo?.district ?? "",
+          address: userInfo?.address ?? "",
         },
       },
       recipientInfo: {
         name,
         email,
         number,
-        address: {
-          division,
-          district,
-          address,
-        },
+        address: { division, district, address },
       },
-      parcelStatus,
+      parcelStatus: Status.Pending,
       shippingMethod,
       parcelWeight: weight,
       parcelQuantity: quantity,
       deliveryDateTime: new Date().toLocaleString(),
       paymentInfo: {
         method: paymentMethod,
-        status: paymentStatus,
+        status: PaymentStatus.Pending,
         amount: estimatedTotal,
       },
       description,
     };
 
+    // Attach merchant info if the sender is a merchant
     if (userInfo?.role === "merchant") {
       parcelData = {
         ...parcelData,
         merchantInfo: {
-          merchantId: userInfo?._id || "",
-          ownerName: userInfo?.name || "",
+          merchantId: userInfo?._id ?? "",
+          ownerName: userInfo?.name ?? "",
           shopName: shop,
-          email: userInfo?.email || "",
-          number: userInfo?.number || "",
+          email: userInfo?.email ?? "",
+          number: userInfo?.number ?? "",
           address: {
-            division: userInfo?.division || "",
-            district: userInfo?.district || "",
-            address: userInfo?.address || "",
+            division: userInfo?.division ?? "",
+            district: userInfo?.district ?? "",
+            address: userInfo?.address ?? "",
           },
         },
       };
     }
 
+    // ── Create parcel ───────────────────────────────────────────────────────
     const parcelResponse = await createParcel(parcelData);
 
-    // Payment functionality
-    if (parcelResponse.code === "success") {
-      // Payment invoice data
-      const paymentData = {
-        userEmail: userInfo?.email || "",
-        userName: userInfo?.name || "",
-        userRole: userInfo?.role || "",
-        parcelId: parcelResponse?.data.parcelId || "",
-        paymentMethod,
-        amount: estimatedTotal,
-        status: paymentStatus,
-        paymentDateTime: new Date().toLocaleString(),
-      };
+    if (parcelResponse.code !== "success") {
+      toast.error("Failed to create parcel. Please try again.");
+      return;
+    }
 
-      // Payment API response
-      if (paymentMethod === "online") {
-        const paymentResponse = await createPayment(paymentData);
+    const invoiceBase = {
+      userEmail: userInfo?.email ?? "",
+      userName: userInfo?.name ?? "",
+      userRole: userInfo?.role ?? "",
+      parcelId: parcelResponse.data.parcelId ?? "",
+      paymentMethod,
+      amount: estimatedTotal,
+      status: PaymentStatus.Pending,
+      paymentDateTime: new Date().toLocaleString(),
+    };
 
-        if (paymentResponse.code === "success") {
-          const updateResponse = await updateInvoiceStatus({
-            id: `${paymentResponse.data.id}`,
-            data: {
-              parcelId: `${parcelResponse.data._id}`,
-              status: PaymentStatus.Paid,
-            },
-          });
+    // ── Online payment (Stripe) ─────────────────────────────────────────────
+    if (paymentMethod === "online") {
+      const paymentResponse = await createPayment(invoiceBase);
 
-          if (updateResponse.code === "success") {
-            reset();
-            router.push(`${paymentResponse.data.url}`);
-          } else {
-            console.error(updateResponse.error);
-          }
-        } else {
-          toast.error("Payment created failed");
-          console.error(paymentResponse.error);
-          router.push(`/dashboard/${userInfo?.role}/parcels`);
-        }
-      } else {
-        const paymentResponse = await createInvoice(paymentData);
-        if (paymentResponse.code === "success") {
-          reset();
-          toast.success("Parcel created successfully");
-          router.push(`/dashboard/${userInfo?.role}/parcels`);
-        } else {
-          toast.error("Payment created failed");
-          console.error(paymentResponse.error);
-          router.push(`/dashboard/${userInfo?.role}/parcels`);
-        }
+      if (paymentResponse.code !== "success") {
+        toast.error(
+          "Payment initiation failed. Your parcel was saved — please pay from Invoices.",
+        );
+        router.push(`/dashboard/${userInfo?.role}/parcels`);
+        return;
       }
+
+      const updateResponse = await updateInvoiceStatus({
+        id: `${paymentResponse.data.id}`,
+        data: {
+          parcelId: `${parcelResponse.data._id}`,
+          status: PaymentStatus.Paid,
+        },
+      });
+
+      if (updateResponse.code === "success") {
+        reset();
+        // Redirect to Stripe checkout
+        router.push(`${paymentResponse.data.url}`);
+      } else {
+        toast.error("Invoice update failed. Please contact support.");
+      }
+      return;
+    }
+
+    // ── Cash on delivery ────────────────────────────────────────────────────
+    const invoiceResponse = await createInvoice(invoiceBase);
+
+    if (invoiceResponse.code === "success") {
+      reset();
+      toast.success("Parcel created successfully!");
+      router.push(`/dashboard/${userInfo?.role}/parcels`);
     } else {
-      toast.error("Parcel created failed");
-      console.error(parcelResponse.error);
+      toast.error("Parcel was created but invoice generation failed.");
+      router.push(`/dashboard/${userInfo?.role}/parcels`);
     }
   };
 
+  const isProfileIncomplete = !userInfo?.address;
+
   return (
-    <form onSubmit={handleSubmit(handleForm)} className="space-y-4">
-      {/* recipient details */}
-      <h1 className="text-xl font-medium">Recipient Details</h1>
+    <form onSubmit={handleSubmit(handleForm)} className="space-y-5" noValidate>
+      {/* ── Recipient details ─────────────────────────────────────────── */}
+      <h2 className="text-base font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+        Recipient Details
+      </h2>
+
       <CustomInput
-        label="Name"
+        label={t.parcel.form.receiverName}
         name="name"
         register={register}
         error={errors}
         validationRules={{
-          required: "*name is required",
-          pattern: { value: /^[A-Za-z ]+$/i, message: "*name is invalid" },
-          minLength: { value: 2, message: "*name is invalid" },
-          maxLength: { value: 20, message: "*name is invalid" },
+          required: t.auth.errors.nameRequired,
+          pattern: {
+            value: VALIDATION_PATTERNS.name,
+            message: t.auth.errors.nameInvalid,
+          },
+          minLength: { value: 2, message: t.auth.errors.nameInvalid },
+          maxLength: { value: 30, message: t.auth.errors.nameInvalid },
         }}
       />
       <CustomInput
-        label="Email"
+        label={t.common.email}
         name="email"
         type="email"
         register={register}
         error={errors}
         validationRules={{
-          required: "*email is required",
+          required: t.auth.errors.emailRequired,
           pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: "*invalid email address",
+            value: VALIDATION_PATTERNS.email,
+            message: t.auth.errors.emailInvalid,
           },
         }}
       />
       <CustomInput
-        label="Phone Number"
+        label={t.parcel.form.receiverPhone}
         name="number"
         register={register}
         error={errors}
         validationRules={{
-          required: "*phone number is required",
+          required: t.auth.errors.phoneRequired,
           pattern: {
-            value: /^[0-9+\\-]+$/,
-            message: "invalid phone number",
+            value: VALIDATION_PATTERNS.phone,
+            message: t.auth.errors.phoneInvalid,
           },
-          minLength: { value: 7, message: "*invalid phone number" },
-          maxLength: { value: 15, message: "*invalid phone number" },
+          minLength: { value: 7, message: t.auth.errors.phoneInvalid },
+          maxLength: { value: 15, message: t.auth.errors.phoneInvalid },
         }}
       />
-      <div className="flex gap-4">
+      <div className="flex gap-3">
         <SelectDivision
           division={division}
           setDivision={setDivision}
@@ -233,36 +240,39 @@ const ParcelForm = ({
         />
       </div>
       <CustomInput
-        label="Address"
+        label={t.parcel.form.receiverAddress}
         name="address"
         register={register}
         error={errors}
-        validationRules={{
-          required: "*address is required",
-        }}
+        validationRules={{ required: t.auth.errors.addressRequired }}
       />
 
-      {/* parcel details */}
-      <h1 className="text-xl font-medium">Parcel Details</h1>
+      {/* ── Parcel details ────────────────────────────────────────────── */}
+      <h2 className="text-base font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide pt-2">
+        Parcel Details
+      </h2>
 
+      {/* Shop selector — merchant only */}
       {userInfo?.role === "merchant" && (
         <SelectShop shop={shop} setShop={setShop} shops={shops} />
       )}
 
       <div className="grid sm:grid-cols-2 gap-4">
+        {/* Weight */}
         <Select
           label={
-            <p>
-              Total Weight <span className="text-danger">*</span>
-            </p>
+            <span>
+              {t.parcel.form.parcelWeight}{" "}
+              <span className="text-danger" aria-hidden="true">
+                *
+              </span>
+            </span>
           }
-          {...register("weight", {
-            required: "*weight is required",
-          })}
+          {...register("weight", { required: "Weight is required" })}
           disallowEmptySelection
-          defaultSelectedKeys={"1"}
-          isInvalid={errors?.weight ? true : false}
-          errorMessage={errors?.weight && `${errors?.weight?.message}`}
+          defaultSelectedKeys={["1"]}
+          isInvalid={!!errors?.weight}
+          errorMessage={errors?.weight?.message}
           variant="bordered"
           radius="sm"
           name="weight"
@@ -274,6 +284,8 @@ const ParcelForm = ({
             </SelectItem>
           ))}
         </Select>
+
+        {/* Quantity */}
         <CustomInput
           label="Total Quantity"
           name="quantity"
@@ -282,15 +294,16 @@ const ParcelForm = ({
           error={errors}
           endContent={<p className="text-small text-default-600">pcs</p>}
           validationRules={{
-            required: "*quantity is required",
+            required: "Quantity is required",
             pattern: {
               value: /^[1-9]\d*$/,
-              message: "invalid quantity",
+              message: "Must be a positive number",
             },
           }}
         />
       </div>
 
+      {/* Shipping method */}
       <RadioGroup
         label="Shipping Method"
         defaultValue="standard"
@@ -298,15 +311,22 @@ const ParcelForm = ({
         onValueChange={setShippingMethod}
       >
         <div className="grid sm:grid-cols-2 gap-4">
-          <CustomRadio description="Regular shipping option" value="standard">
+          <CustomRadio
+            description="Regular shipping — 3 to 5 business days"
+            value="standard"
+          >
             Standard
           </CustomRadio>
-          <CustomRadio description="Next day shipping option" value="express">
+          <CustomRadio
+            description="Express shipping — next business day"
+            value="express"
+          >
             Express
           </CustomRadio>
         </div>
       </RadioGroup>
 
+      {/* Payment method */}
       <RadioGroup
         label="Payment Method"
         defaultValue="online"
@@ -314,37 +334,36 @@ const ParcelForm = ({
         onValueChange={setPaymentMethod}
       >
         <div className="grid sm:grid-cols-2 gap-4">
-          <CustomRadio description="Stripe payment option" value="online">
+          <CustomRadio description="Pay securely via Stripe" value="online">
             Online Payment
           </CustomRadio>
-          <CustomRadio description="Cash on delivery option" value="cash">
-            Cash On Delivery
+          <CustomRadio description="Pay in cash upon delivery" value="cash">
+            Cash on Delivery
           </CustomRadio>
         </div>
       </RadioGroup>
 
+      {/* Description */}
       <Textarea
         {...register("description")}
         radius="sm"
         variant="bordered"
-        label="Description"
-        placeholder="Enter parcel description"
+        label={t.parcel.description}
+        placeholder={t.parcel.form.parcelDescription}
       />
 
-      <div className="flex gap-4 justify-end">
-        <SecondaryButton
-          onClick={() => router.back()}
-          type="button"
-          fullWidth={true}
-        >
-          Cancel
+      {/* Actions */}
+      <div className="flex gap-3 justify-end pt-2">
+        <SecondaryButton type="button" fullWidth onClick={() => router.back()}>
+          {t.common.cancel}
         </SecondaryButton>
         <PrimaryButton
           type="submit"
-          fullWidth={true}
-          isDisabled={!userInfo?.address ? true : false}
+          fullWidth
+          isLoading={isSubmitting}
+          isDisabled={isProfileIncomplete}
         >
-          Submit
+          {t.common.submit}
         </PrimaryButton>
       </div>
     </form>

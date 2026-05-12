@@ -1,3 +1,4 @@
+import { QUERY_KEYS, ROLES } from "@/lib/constants";
 import { UserType } from "@/types/UserType";
 import { getAllUsers, getSingleUser } from "@/utils/api/user";
 import { useQuery } from "@tanstack/react-query";
@@ -6,46 +7,33 @@ import { useAuth } from "./useAuth";
 export const useUserInfo = () => {
   const { user, role } = useAuth();
 
-  // Get user info by email
+  // ── Current user's info ───────────────────────────────────────────────────
   const {
     data: userInfo = {} as UserType,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      if (user?.email) {
-        const userResponse = await getSingleUser(user.email);
-        if (userResponse.code === "success") {
-          return userResponse.data;
-        } else {
-          console.error(userResponse.error);
-        }
-      }
+    queryKey: QUERY_KEYS.userInfo(user?.email ?? undefined),
+    enabled: !!user?.email,
+    queryFn: async (): Promise<UserType> => {
+      const response = await getSingleUser(user!.email!);
+      if (response.code === "success") return response.data;
+      throw new Error("Failed to fetch user info");
     },
   });
 
-  // Get all users
+  // ── All users (admin only) ────────────────────────────────────────────────
   const {
     data: allUser = [] as UserType[],
     isLoading: allIsLoading,
     refetch: refetchAll,
   } = useQuery({
-    queryKey: ["allUser"],
-    queryFn: async () => {
-      if (user?.email && role) {
-        if (role === "admin") {
-          const userResponse = await getAllUsers();
-          if (userResponse.code === "success") {
-            return userResponse.data;
-          } else {
-            console.error(userResponse.error);
-            return [];
-          }
-        } else {
-          return [];
-        }
-      }
+    queryKey: QUERY_KEYS.users(),
+    enabled: !!user?.email && role === ROLES.ADMIN,
+    queryFn: async (): Promise<UserType[]> => {
+      const response = await getAllUsers();
+      if (response.code === "success") return response.data;
+      throw new Error("Failed to fetch users");
     },
   });
 

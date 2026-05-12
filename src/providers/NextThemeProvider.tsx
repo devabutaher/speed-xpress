@@ -1,13 +1,18 @@
 "use client";
 
-import { PropsWithChildren } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "next-themes";
+import { PropsWithChildren } from "react";
 
 const NextThemeProvider = ({ children }: PropsWithChildren) => {
   return (
     <NextUIProvider>
-      <ThemeProvider attribute="class" defaultTheme="dark">
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem
+        disableTransitionOnChange={false}
+      >
         {children}
       </ThemeProvider>
     </NextUIProvider>

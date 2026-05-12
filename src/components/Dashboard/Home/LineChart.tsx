@@ -1,3 +1,5 @@
+"use client";
+
 import { ParcelType } from "@/types/ParcelType";
 import {
   CategoryScale,
@@ -18,48 +20,64 @@ ChartJS.register(
   PointElement,
   Legend,
   Tooltip,
-  Filler
+  Filler,
 );
 
 const LineChart = ({ parcels }: { parcels: ParcelType[] }) => {
-  const deliveryTimes = parcels
-    .map((parcel) => parcel.deliveryDateTime)
-    .map((date) => date.split(", "));
-  const chargeAmounts = parcels.map((parcel) => parcel.paymentInfo.amount);
+  // Use just the date part for cleaner labels
+  const labels = parcels.map((p) =>
+    p.deliveryDateTime ? p.deliveryDateTime.split(",")[0] : "",
+  );
+  const amounts = parcels.map((p) => p.paymentInfo?.amount ?? 0);
 
   const data = {
-    labels: deliveryTimes,
+    labels,
     datasets: [
       {
-        label: "Showing Total Charge",
-        data: chargeAmounts,
+        label: "Charge per Parcel (৳)",
+        data: amounts,
         fill: true,
-        borderColor: "rgb(244, 91, 29)",
-        pointBorderColor: "rgb(244, 91, 29)",
-        backgroundColor: "#ffd8ae",
-        tension: 0.1,
+        borderColor: "#3b82f6",
+        pointBorderColor: "#3b82f6",
+        pointBackgroundColor: "#fff",
+        backgroundColor: "rgba(59, 130, 246, 0.12)",
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
       },
     ],
   };
 
   const options = {
-    Plugin: {
-      legend: true,
-      Tooltip: true,
-      filler: {
-        propagate: false,
-      },
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { position: "top" as const },
+      tooltip: { mode: "index" as const, intersect: false },
     },
     scales: {
-      y: {
-        min: 80,
-        max: 450,
+      x: {
+        grid: { display: false },
+        ticks: { maxTicksLimit: 6, maxRotation: 0 },
       },
+      y: {
+        beginAtZero: true,
+        grid: { color: "rgba(156, 163, 175, 0.15)" },
+      },
+    },
+    interaction: {
+      mode: "nearest" as const,
+      axis: "x" as const,
+      intersect: false,
     },
   };
 
   return (
-    <div className="md:w-[50rem]">
+    <div className="w-full dashboard-card">
+      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wide">
+        Revenue Over Time
+      </h3>
       <Line data={data} options={options} />
     </div>
   );

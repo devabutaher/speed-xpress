@@ -1,71 +1,100 @@
+"use client";
+
+import { useTranslation } from "@/lib/i18n";
 import {
-  MdOutlineShareLocation,
+  fadeRight,
+  fadeUp,
+  inViewProps,
+  staggerContainer,
+  staggerItem,
+} from "@/lib/motion";
+import { motion } from "framer-motion";
+import {
   MdAddHome,
   MdAttachMoney,
+  MdOutlineShareLocation,
 } from "react-icons/md";
 
+const features = [
+  {
+    icon: MdOutlineShareLocation,
+    titleKey: "transparentPricing" as const,
+    descKey: "transparentPricingDesc" as const,
+  },
+  {
+    icon: MdAddHome,
+    titleKey: "warehouseStorage" as const,
+    descKey: "warehouseStorageDesc" as const,
+  },
+  {
+    icon: MdAttachMoney,
+    titleKey: "onlineTracking" as const,
+    descKey: "onlineTrackingDesc" as const,
+  },
+];
+
 const WhatWeOffer = () => {
+  const t = useTranslation();
+  const offer = t.home.whatWeOffer;
+
   return (
-    <div className="max-w-screen-xl mx-auto pb-20 px-4">
-      <div className="border border-gray-200 dark:border-gray-800 md:p-8 p-4 rounded-2xl bg-light dark:bg-dark shadow-xl">
-        <div className="grid md:grid-cols-2 gap-4 pb-8">
-          <div className="space-y-6">
-            <div className="group relative inline-block text-sm font-medium text-primary">
-              <span className="absolute inset-0 translate-x-0.5 translate-y-0.5 bg-primary transition-transform group-hover:translate-y-0 group-hover:translate-x-0 rounded-full"></span>
-              <span className="relative block border border-current bg-light dark:bg-gray-900 px-8 py-3 font-bold rounded-full cursor-pointer">
-                FEATURES
-              </span>
-            </div>
-            <h2 className="md:text-4xl font-bold text-3xl lg:max-w-md">
-              WHAT WE OFFER
+    <section className="container-xl pb-20">
+      <div className="border border-gray-200 dark:border-gray-800 md:p-10 p-5 rounded-2xl bg-white dark:bg-gray-950 shadow-card">
+        {/* Section header */}
+        <div className="grid md:grid-cols-2 gap-6 pb-10">
+          <motion.div
+            {...inViewProps}
+            variants={fadeRight}
+            className="space-y-4"
+          >
+            <span className="inline-flex items-center px-5 py-2 rounded-full border border-primary text-primary text-sm font-bold uppercase tracking-wider">
+              {offer.badge}
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold">
+              {offer.title}
             </h2>
-          </div>
-          <p className="md:text-lg text-gray-500 border-l-4 border-primary pl-8  flex items-center line-clamp-3">
-            The website should have an intuitive and easy-to-navigate interface,
-            making it simple for users to access and utilize the various
-            features.
-          </p>
+          </motion.div>
+
+          <motion.p
+            {...inViewProps}
+            variants={fadeUp}
+            className="md:text-lg text-gray-500 border-l-4 border-primary pl-6 flex items-center"
+          >
+            {offer.subtitle}
+          </motion.p>
         </div>
-        <div className="grid lg:grid-cols-3 gap-4">
-          <div className="block space-y-6 rounded-xl bg-blue-200 dark:bg-gray-900 shadow-xl p-4 sm:p-6 lg:p-8">
-            <div className="bg-primary rounded-full p-2 inline-block shadow-xl">
-              <MdOutlineShareLocation size={"4rem"} className="text-light" />
-            </div>
-            <h3 className="text-xl font-semibold sm:text-2xl">
-              TRANSPARENT PRICING
-            </h3>
-            <p className="text-lg text-gray-500 line-clamp-3">
-              Globally initiate resource maximizing to- tal linkage via enabled
-              process improvements.
-            </p>
-          </div>
-          <div className="block space-y-6 rounded-xl bg-blue-200 dark:bg-gray-900 shadow-xl p-4 sm:p-6 lg:p-8">
-            <div className="bg-primary rounded-full p-2 inline-block shadow-xl">
-              <MdAddHome size={"4rem"} className="text-light" />
-            </div>
-            <h3 className="text-xl font-semibold sm:text-2xl">
-              WAREHOUSE STORAGE
-            </h3>
-            <p className="text-lg text-gray-500 line-clamp-3">
-              This includes tracking stock levels, receiving notifications for
-              low stock, and generating reports on inventory status.
-            </p>
-          </div>
-          <div className="block space-y-6 rounded-xl bg-blue-200 dark:bg-gray-900 shadow-xl p-4 sm:p-6 lg:p-8">
-            <div className="bg-primary rounded-full p-2 inline-block shadow-xl">
-              <MdAttachMoney size={"4rem"} className="text-light" />
-            </div>
-            <h3 className="text-xl font-semibold sm:text-2xl">
-              ONLINE TRACKING
-            </h3>
-            <p className="text-lg text-gray-500 line-clamp-3">
-              Provide a comprehensive tracking system that allows users to track
-              their shipments in real-time.
-            </p>
-          </div>
-        </div>
+
+        {/* Feature cards */}
+        <motion.div
+          variants={staggerContainer}
+          {...inViewProps}
+          className="grid lg:grid-cols-3 gap-5"
+        >
+          {features.map(({ icon: Icon, titleKey, descKey }) => (
+            <motion.div
+              key={titleKey}
+              variants={staggerItem}
+              className="group relative rounded-xl bg-blue-50 dark:bg-gray-900 p-6 sm:p-8 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-default"
+            >
+              {/* Icon circle */}
+              <div className="mb-6 inline-flex p-3 bg-primary rounded-2xl shadow-glow group-hover:scale-110 transition-transform duration-300">
+                <Icon size={44} className="text-white" />
+              </div>
+
+              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">
+                {offer[titleKey]}
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                {offer[descKey]}
+              </p>
+
+              {/* Subtle gradient accent on hover */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 };
 

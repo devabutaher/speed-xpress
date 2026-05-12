@@ -1,6 +1,7 @@
 "use client";
 
 import app from "@/config/firebaseConfig";
+import { ROLES, Role, getDashboardPath } from "@/lib/constants";
 import { AuthContextType } from "@/types/AuthContextType";
 import { ChildrenProps } from "@/types/ChildrenProps";
 import { UserType } from "@/types/UserType";
@@ -18,189 +19,159 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const auth = getAuth(app);
 
-export const AuthContext = createContext<AuthContextType>(
-  {} as AuthContextType
-);
+function resolveRole(displayName: string | null | undefined): Role {
+  return ALL_ROLES.includes(displayName as Role)
+    ? (displayName as Role)
+    : ROLES.REGULAR;
+}
+
+const ALL_ROLES = Object.values(ROLES) as Role[];
+
+export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 const AuthProvider = ({ children }: ChildrenProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [role, setRole] = useState<Role | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const router = useRouter();
   const pathname = usePathname();
 
-  const registerUser = async (
-    email: string,
-    password: string,
-    displayName: string
-  ): Promise<User | null> => {
-    setLoading(true);
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      if (userCredential.user.email) {
-        await updateProfile(userCredential.user, {
-          displayName: displayName,
-        });
-
-        // await createJWT({
-        //   email: userCredential.user.email,
-        //   role: displayName,
-        // });
-
-        setUser({
-          ...userCredential.user,
+  const registerUser = useCallback(
+    async (
+      email: string,
+      password: string,
+      displayName: string
+    ): Promise<User | null> => {
+      setLoading(true);
+      try {
+        const { user: newUser } = await createUserWithEmailAndPassword(
+          auth,
           email,
-          displayName,
-        });
-
-        setRole(displayName);
-        setLoading(false);
-      }
-
-      return userCredential.user;
-    } catch (error: any) {
-      if (error.message.includes("email")) {
-        toast.error("Email already exist");
-      } else {
-        toast.error("Something went wrong!");
-      }
-
-      setLoading(false);
-      // console.error(error);
-      return null;
-    }
-  };
-
-  const loginUser = async (email: string, password: string) => {
-    setLoading(true);
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      if (userCredential.user) {
-        // await createJWT({
-        //   email: userCredential.user?.email as string,
-        //   role: userCredential.user?.displayName as string,
-        // });
-
-        setRole(
-          ["regular", "merchant", "rider", "admin"].includes(
-            `${userCredential.user?.displayName}`
-          )
-            ? userCredential.user?.displayName
-            : "regular"
+          password
         );
 
+        await updateProfile(newUser, { displayName });
+
+        const resolvedRole = resolveRole(displayName);
+        setUser({ ...newUser, email, displayName });
+        setRole(resolvedRole);
+        return newUser;
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Something went wrong";
+        toast.error(
+          message.includes("email")
+            ? "This email is already registered"
+            : "Registration failed. Please try again."
+        );
+        return null;
+      } finally {
         setLoading(false);
       }
+    },
+    []
+  );
 
-      return userCredential.user;
-    } catch (error) {
-      toast.error("Invalid email or password");
-      // console.error(error);
-      setLoading(false);
-      return null;
-    }
-  };
+  const loginUser = useCallback(
+    async (email: string, password: string): Promise<User | null> => {
+      setLoading(true);
+      try {
+        const { user: loggedInUser } = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
-  const googleSignIn = async () => {
+        setRole(resolveRole(loggedInUser.displayName));
+        return loggedInUser;
+      } catch {
+        toast.error("Invalid email or password");
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const googleSignIn = useCallback(async (): Promise<void> => {
     const provider = new GoogleAuthProvider();
-
     try {
-      const userCredential = await signInWithPopup(auth, provider);
+      const { user: googleUser } = await signInWithPopup(auth, provider);
+
+      if (!googleUser.email) return;
 
       const userData: UserType = {
-        name: userCredential.user.displayName,
-        email: userCredential.user.email,
-        photoURL: userCredential.user.photoURL,
+        name: googleUser.displayName,
+        email: googleUser.email,
+        photoURL: googleUser.photoURL,
         number: "",
         division: "",
         district: "",
         address: "",
-        role: "regular",
+        role: ROLES.REGULAR,
       };
 
-      if (userCredential.user.email) {
-        router.push("/dashboard/regular");
+      setRole(ROLES.REGULAR);
+      router.push(getDashboardPath(ROLES.REGULAR));
 
-        // await createJWT({
-        //   email: userCredential.user.email,
-        //   role: "regular",
-        // });
-
-        setRole("regular");
-
-        const userResponse = await saveUser(userData);
-        if (userResponse.code === "success") {
-          toast.success("Google sign in Successfully");
-        } else {
-          console.error(userResponse.error);
-        }
+      const userResponse = await saveUser(userData);
+      if (userResponse.code === "success") {
+        toast.success("Signed in with Google");
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      const code = (error as { code?: string })?.code;
+      if (code !== "auth/popup-closed-by-user") {
+        toast.error("Google sign-in failed. Please try again.");
+      }
     }
-  };
+  }, [router]);
 
-  const logOut = async () => {
+  const logOut = useCallback(async (): Promise<void> => {
     try {
       setUser(null);
       setRole(null);
-      // await removeJWT();
       await signOut(auth);
 
       if (pathname !== "/") {
         router.push("/login");
       }
 
-      toast.success("Sign out successfully");
-    } catch (error) {
-      console.error(error);
-      toast.error("Sign out failed");
+      toast.success("Signed out successfully");
+    } catch {
+      toast.error("Sign out failed. Please try again.");
     }
-  };
+  }, [pathname, router]);
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string): Promise<void> => {
     try {
       await sendPasswordResetEmail(auth, email);
-    } catch (error) {
-      console.error(error);
+      toast.success("Password reset email sent");
+    } catch {
+      toast.error("Failed to send reset email. Please try again.");
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
 
-      if (currentUser !== null) {
-        setRole(
-          ["regular", "merchant", "rider", "admin"].includes(
-            `${currentUser?.displayName}`
-          )
-            ? currentUser?.displayName
-            : "regular"
-        );
+      if (currentUser) {
+        setRole(resolveRole(currentUser.displayName));
+      } else {
+        setRole(null);
       }
 
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
   const value: AuthContextType = {

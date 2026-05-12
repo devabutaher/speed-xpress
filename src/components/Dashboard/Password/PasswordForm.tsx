@@ -1,6 +1,8 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/lib/i18n";
+import { VALIDATION_PATTERNS } from "@/lib/utils";
 import PrimaryButton from "@/ui/PrimaryButton";
 import SecondaryButton from "@/ui/SecondaryButton";
 import { Input } from "@nextui-org/react";
@@ -9,46 +11,43 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const PasswordForm = () => {
-  const [email, setEmail] = useState("");
-
+  const t = useTranslation();
   const { user, resetPassword } = useAuth();
   const router = useRouter();
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
-    if (user?.email) {
-      setEmail(user.email);
-    }
+    if (user?.email) setEmail(user.email);
   }, [user]);
 
-  const handleForm = async () => {
-    if (email.includes("@")) {
-      resetPassword(`${email}`);
-      toast.info("Please check your mail");
-    } else {
-      toast.error("Invalid email");
+  const handleReset = async () => {
+    if (!VALIDATION_PATTERNS.email.test(email)) {
+      toast.error(t.auth.errors.emailInvalid);
+      return;
     }
+    await resetPassword(email);
+    // Toast is handled inside resetPassword in AuthProvider
   };
 
   return (
-    <div className="flex flex-col gap-4 justify-between h-[10rem]">
+    <div className="space-y-6">
       <Input
         type="email"
-        name="email"
-        id="email"
-        label="Email"
+        label={t.auth.email}
         variant="bordered"
         radius="sm"
-        readOnly={user?.email ? true : false}
-        value={`${email}`}
+        // Read-only when the email is pre-filled from the logged-in user
+        isReadOnly={!!user?.email}
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
-        description="Click reset and check your mail"
-        className="max-w-xs"
+        description="A reset link will be sent to this address"
+        classNames={{ base: "max-w-sm" }}
       />
-      <div className="flex gap-4">
+      <div className="flex gap-3">
         <SecondaryButton size="md" onClick={() => router.back()}>
-          Back
+          {t.common.back}
         </SecondaryButton>
-        <PrimaryButton size="md" onClick={handleForm}>
+        <PrimaryButton size="md" onClick={handleReset}>
           Reset Now
         </PrimaryButton>
       </div>

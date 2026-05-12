@@ -1,3 +1,5 @@
+import { QUERY_KEYS, ROLES } from "@/lib/constants";
+import { ShopResponseType } from "@/types/ShopType";
 import { getAllShop, getShopsByEmail } from "@/utils/api/shop";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
@@ -5,35 +7,23 @@ import { useAuth } from "./useAuth";
 export const useShop = () => {
   const { user, role } = useAuth();
 
-  // Get shops by email
+  const isMerchantOrAdmin = role === ROLES.MERCHANT || role === ROLES.ADMIN;
+
   const {
-    data: shops = [],
+    data: shops = [] as ShopResponseType[],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["shops"],
-    queryFn: async () => {
-      if (user?.email && role) {
-        if (role === "merchant") {
-          const shopResponse = await getShopsByEmail(user.email);
-          if (shopResponse.code === "success") {
-            return shopResponse.data || [];
-          } else {
-            console.error(shopResponse.error);
-            return [];
-          }
-        }
-        if (role === "admin") {
-          const shopResponse = await getAllShop();
-          if (shopResponse.code === "success") {
-            return shopResponse.data || [];
-          } else {
-            console.error(shopResponse.error);
-            return [];
-          }
-        }
-      }
-      return [];
+    queryKey: QUERY_KEYS.shops(user?.email ?? undefined),
+    enabled: !!user?.email && isMerchantOrAdmin,
+    queryFn: async (): Promise<ShopResponseType[]> => {
+      const response =
+        role === ROLES.MERCHANT
+          ? await getShopsByEmail(user!.email!)
+          : await getAllShop();
+
+      if (response.code === "success") return response.data ?? [];
+      throw new Error("Failed to fetch shops");
     },
   });
 

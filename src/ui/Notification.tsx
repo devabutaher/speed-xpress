@@ -10,15 +10,16 @@ const Notification = () => {
   return (
     <ToastContainer
       position="top-right"
-      autoClose={1000}
+      autoClose={2500}
       hideProgressBar={false}
-      newestOnTop={false}
+      newestOnTop
       closeOnClick
       rtl={false}
-      pauseOnFocusLoss
+      pauseOnFocusLoss={false}
       draggable={false}
       pauseOnHover
       theme={localTheme}
+      toastClassName="rounded-lg shadow-card text-sm"
     />
   );
 };
