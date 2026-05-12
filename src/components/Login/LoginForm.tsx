@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import { getDashboardPath } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 import { VALIDATION_PATTERNS } from "@/lib/utils";
 import CustomInput from "@/ui/CustomInput";
@@ -11,7 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaGoogle, FaRocket } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 interface LoginFormValues {
@@ -33,11 +34,11 @@ const LoginForm = () => {
   } = useForm<LoginFormValues>();
 
   const onSubmit = async ({ email, password }: LoginFormValues) => {
-    const user = await loginUser(email, password);
-    if (user) {
+    const result = await loginUser(email, password);
+    if (result) {
       reset();
       toast.success(t.auth.success.signIn);
-      router.push("/dashboard");
+      router.push(getDashboardPath(result.role));
     }
   };
 
@@ -69,6 +70,22 @@ const LoginForm = () => {
             <SecondaryButton type="button" fullWidth onClick={googleSignIn}>
               <FaGoogle className="shrink-0" />
               <span>{t.auth.signInWithGoogle}</span>
+            </SecondaryButton>
+
+            {/* Demo Login */}
+            <SecondaryButton
+              type="button"
+              fullWidth
+              onClick={async () => {
+                const result = await loginUser("demo@gmail.com", "121212");
+                if (result) {
+                  toast.success(t.auth.success.signIn);
+                  router.push(getDashboardPath(result.role));
+                }
+              }}
+            >
+              <FaRocket className="shrink-0" />
+              <span>Demo Login</span>
             </SecondaryButton>
 
             <div className="flex items-center gap-3 text-xs text-gray-400">

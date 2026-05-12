@@ -247,6 +247,8 @@ export const bn: Dictionary = {
       contactUs: "যোগাযোগ করুন",
       careers: "ক্যারিয়ার",
       faq: "সচরাচর জিজ্ঞাসা",
+      privacyPolicy: "গোপনীয়তা নীতি",
+      termsOfService: "সেবার শর্তাদি",
       airFreight: "এয়ার ফ্রেইট",
       droneFreight: "ড্রোন ফ্রেইট",
       groundFreight: "গ্রাউন্ড ফ্রেইট",

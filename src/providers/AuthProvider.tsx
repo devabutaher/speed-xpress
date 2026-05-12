@@ -47,7 +47,7 @@ const AuthProvider = ({ children }: ChildrenProps) => {
       email: string,
       password: string,
       displayName: string
-    ): Promise<User | null> => {
+    ): Promise<{ user: User; role: Role } | null> => {
       setLoading(true);
       try {
         const { user: newUser } = await createUserWithEmailAndPassword(
@@ -61,7 +61,7 @@ const AuthProvider = ({ children }: ChildrenProps) => {
         const resolvedRole = resolveRole(displayName);
         setUser({ ...newUser, email, displayName });
         setRole(resolvedRole);
-        return newUser;
+        return { user: newUser, role: resolvedRole };
       } catch (error: unknown) {
         const message =
           error instanceof Error ? error.message : "Something went wrong";
@@ -79,7 +79,7 @@ const AuthProvider = ({ children }: ChildrenProps) => {
   );
 
   const loginUser = useCallback(
-    async (email: string, password: string): Promise<User | null> => {
+    async (email: string, password: string): Promise<{ user: User; role: Role } | null> => {
       setLoading(true);
       try {
         const { user: loggedInUser } = await signInWithEmailAndPassword(
@@ -88,8 +88,9 @@ const AuthProvider = ({ children }: ChildrenProps) => {
           password
         );
 
-        setRole(resolveRole(loggedInUser.displayName));
-        return loggedInUser;
+        const resolvedRole = resolveRole(loggedInUser.displayName);
+        setRole(resolvedRole);
+        return { user: loggedInUser, role: resolvedRole };
       } catch {
         toast.error("Invalid email or password");
         return null;

@@ -8,6 +8,10 @@ export const mainNavbarData = [
     link: "/features",
   },
   {
+    name: "Blog",
+    link: "/blog",
+  },
+  {
     name: "About",
     link: "/about-us",
   },

@@ -10,8 +10,6 @@ const PieChart = ({ parcels }: { parcels: ParcelType[] }) => {
   const count = (status: Status) =>
     parcels.filter((p) => p.parcelStatus === status).length;
 
-  // NOTE: The original code had a bug — both "Picked" and "Cancelled"
-  // used Status.Picked. This is now fixed with the correct Status values.
   const data = {
     labels: ["Delivered", "Pending", "Picked", "Returned", "Cancelled"],
     datasets: [

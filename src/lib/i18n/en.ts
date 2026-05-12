@@ -247,6 +247,8 @@ export const en = {
       contactUs: "Contact Us",
       careers: "Careers",
       faq: "FAQ",
+      privacyPolicy: "Privacy Policy",
+      termsOfService: "Terms of Service",
       airFreight: "Air Freight",
       droneFreight: "Drone Freight",
       groundFreight: "Ground Freight",

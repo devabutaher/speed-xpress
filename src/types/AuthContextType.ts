@@ -10,9 +10,9 @@ export type AuthContextType = {
     email: string,
     password: string,
     displayName: string
-  ) => Promise<User | null>;
+  ) => Promise<{ user: User; role: Role } | null>;
   googleSignIn: () => Promise<void>;
-  loginUser: (email: string, password: string) => Promise<User | null>;
+  loginUser: (email: string, password: string) => Promise<{ user: User; role: Role } | null>;
   logOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   loading: boolean;

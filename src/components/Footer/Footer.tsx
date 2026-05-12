@@ -109,8 +109,15 @@ const Footer = () => {
                   href="/contact-us"
                   label={t.footer.links.contactUs}
                 />
-                <FooterLink href="/features" label={t.footer.links.careers} />
-                <FooterLink href="/features" label={t.footer.links.faq} />
+                <FooterLink href="/blog" label="Blog" />
+                <FooterLink
+                  href="/privacy-policy"
+                  label={t.footer.links.privacyPolicy}
+                />
+                <FooterLink
+                  href="/terms"
+                  label={t.footer.links.termsOfService}
+                />
               </ul>
             </div>
 

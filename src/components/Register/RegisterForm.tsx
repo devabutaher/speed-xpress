@@ -1,7 +1,8 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@/lib/constants";
+import { getDashboardPath, Role } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 import { RegisterFormType, RegisterUserDataType } from "@/types/FormTypes";
 import { ShopType } from "@/types/ShopType";
 import CustomInput from "@/ui/CustomInput";
@@ -19,6 +20,7 @@ import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const RegisterForm = ({ role }: { role: Role }) => {
+  const t = useTranslation();
   const { googleSignIn, registerUser, loading } = useAuth();
 
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -65,13 +67,14 @@ const RegisterForm = ({ role }: { role: Role }) => {
       };
     }
 
-    const userCredential = await registerUser(email, password, role);
+    const result = await registerUser(email, password, role);
 
-    if (userCredential !== null) {
-      // User response
+    if (result !== null) {
       const userResponse = await saveUser(userData);
 
       if (userResponse.code === "success") {
+        toast.success(t.auth.success.register);
+
         if (userResponse.data.role === "merchant") {
           const shopData: ShopType = {
             name: userResponse.data.shopName as string,
@@ -86,22 +89,20 @@ const RegisterForm = ({ role }: { role: Role }) => {
             merchantEmail: userResponse.data.email as string,
           };
 
-          // Shop response
           const shopResponse = await createShop(shopData);
 
           if (shopResponse.code === "success") {
             reset();
-            router.push(`/dashboard/${role}`);
+            router.push(getDashboardPath(result.role));
           } else {
             console.error(shopResponse.error);
           }
         } else {
           reset();
-          router.push(`/dashboard/${role}`);
+          router.push(getDashboardPath(result.role));
         }
       } else {
         console.error(userResponse.error);
-        toast.success("Register successfully");
       }
     }
   };
