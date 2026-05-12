@@ -9,6 +9,7 @@ export const en = {
   nav: {
     home: "Home",
     features: "Features",
+    blog: "Blog",
     about: "About",
     contact: "Contact",
     login: "Login",
@@ -42,6 +43,7 @@ export const en = {
     registerNow: "Create Account",
     signInWithGoogle: "Continue with Google",
     forgotPassword: "Forgot Password?",
+    demoLogin: "Demo Login",
     noAccount: "Don't have an account?",
     haveAccount: "Already have an account?",
     selectRole: "I am a...",

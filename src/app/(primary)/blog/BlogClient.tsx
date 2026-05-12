@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import { fadeUp, inViewProps, staggerContainer, staggerItem } from "@/lib/motion";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -7,11 +8,13 @@ import Link from "next/link";
 import { blogPosts } from "@/data/blogData";
 
 const BlogClient = () => {
+  const t = useTranslation();
+
   return (
     <div className="container-xl py-10 lg:py-16">
       <motion.div {...inViewProps} variants={fadeUp} className="space-y-3 mb-12">
         <h1 className="text-3xl font-bold uppercase lg:text-4xl">
-          Our <span className="text-primary">Blog</span>
+          {t.nav.blog}
         </h1>
         <div className="flex items-center gap-1">
           <span className="inline-block w-16 h-1 bg-primary rounded-full" />

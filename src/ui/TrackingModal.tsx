@@ -15,6 +15,7 @@ import {
 import { motion } from "framer-motion";
 import {
   MdCheck,
+  MdCancel,
   MdDirectionsBike,
   MdLocalShipping,
   MdOutlineCreateNewFolder,
@@ -29,13 +30,15 @@ const STEPS = [
   { status: Status.Accepted, icon: MdOutlineWarehouse, label: "Accepted" },
   { status: Status.Picked, icon: MdDirectionsBike, label: "Picked Up" },
   { status: Status.Delivered, icon: MdCheck, label: "Delivered" },
+  { status: Status.Canceled, icon: MdCancel, label: "Cancelled" },
 ] as const;
 
 const STATUS_PROGRESS: Partial<Record<Status, number>> = {
   [Status.Pending]: 25,
-  [Status.Accepted]: 50,
-  [Status.Picked]: 75,
+  [Status.Accepted]: 45,
+  [Status.Picked]: 65,
   [Status.Delivered]: 100,
+  [Status.Canceled]: 100,
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────

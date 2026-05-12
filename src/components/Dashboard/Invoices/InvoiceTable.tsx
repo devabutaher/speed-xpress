@@ -202,7 +202,7 @@ const InvoiceTable = () => {
                   <DropdownItem
                     key="view"
                     textValue="View"
-                    onClick={() => handleView(invoice._id ?? "")}
+                    onClick={() => handleView(invoice.invoiceId ?? invoice._id ?? "")}
                   >
                     View
                   </DropdownItem>

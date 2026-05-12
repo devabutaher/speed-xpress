@@ -15,6 +15,8 @@ interface TrackForm {
   id: string;
 }
 
+const DEMO_ID = "SX5ABF76";
+
 const TrackParcel = () => {
   const t = useTranslation();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -24,6 +26,7 @@ const TrackParcel = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<TrackForm>();
 
@@ -43,75 +46,93 @@ const TrackParcel = () => {
     }
   };
 
+  const handleDemo = () => {
+    setValue("id", DEMO_ID);
+  };
+
   return (
     <>
       <motion.form
         onSubmit={handleSubmit(handleParcel)}
-        className="relative flex items-stretch w-full sm:max-w-md"
+        className="relative w-full sm:max-w-md"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        <div className="relative flex-1">
-          <MdSearch
-            size={20}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-          />
-          <input
-            {...register("id", {
-              required: "Parcel ID is required",
-              pattern: {
-                value: /^SX[A-Z0-9]{6}$/,
-                message: "Invalid Parcel ID format (e.g. SXABC123)",
-              },
-            })}
+        <div className="flex items-stretch">
+          <div className="relative flex-1">
+            <MdSearch
+              size={20}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            />
+            <input
+              {...register("id", {
+                required: "Parcel ID is required",
+                pattern: {
+                  value: /^SX[A-Z0-9]{6}$/,
+                  message: "Invalid Parcel ID format (e.g. SXABC123)",
+                },
+              })}
+              className={[
+                "w-full pl-10 pr-4 py-3.5",
+                "border border-r-0 border-solid rounded-l-lg",
+                "bg-white/10 dark:bg-white/5 backdrop-blur-sm",
+                "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                "placeholder:text-gray-400 text-sm",
+                "transition-colors duration-200",
+                errors.id
+                  ? "border-red-400 dark:border-red-500"
+                  : "border-gray-300 dark:border-gray-600",
+              ].join(" ")}
+              placeholder={t.home.hero.trackPlaceholder}
+              type="text"
+              autoComplete="off"
+            />
+            {errors.id && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute -bottom-5 left-0 text-xs text-red-500"
+              >
+                {errors.id.message}
+              </motion.p>
+            )}
+          </div>
+
+          <motion.button
+            type="submit"
+            disabled={isSearching}
+            whileTap={{ scale: 0.97 }}
             className={[
-              "w-full pl-10 pr-4 py-3.5",
-              "border border-r-0 border-solid rounded-l-lg",
-              "bg-white/10 dark:bg-white/5 backdrop-blur-sm",
-              "focus:outline-none focus:ring-2 focus:ring-primary/50",
-              "placeholder:text-gray-400 text-sm",
+              "px-5 py-3.5 rounded-r-lg",
+              "bg-primary hover:bg-blue-600 active:bg-blue-700",
+              "text-white text-sm font-medium whitespace-nowrap",
               "transition-colors duration-200",
-              errors.id
-                ? "border-red-400 dark:border-red-500"
-                : "border-gray-300 dark:border-gray-600",
+              "focus:outline-none focus:ring-2 focus:ring-primary/50",
+              "disabled:opacity-60 disabled:cursor-not-allowed",
+              "flex items-center gap-2",
             ].join(" ")}
-            placeholder={t.home.hero.trackPlaceholder}
-            type="text"
-            autoComplete="off"
-          />
-          {errors.id && (
-            <motion.p
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute -bottom-5 left-0 text-xs text-red-500"
-            >
-              {errors.id.message}
-            </motion.p>
-          )}
+          >
+            {isSearching ? (
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <MdSearch size={18} />
+            )}
+            <span className="hidden sm:inline">{t.home.hero.trackButton}</span>
+          </motion.button>
         </div>
 
-        <motion.button
-          type="submit"
-          disabled={isSearching}
-          whileTap={{ scale: 0.97 }}
-          className={[
-            "px-5 py-3.5 rounded-r-lg",
-            "bg-primary hover:bg-blue-600 active:bg-blue-700",
-            "text-white text-sm font-medium whitespace-nowrap",
-            "transition-colors duration-200",
-            "focus:outline-none focus:ring-2 focus:ring-primary/50",
-            "disabled:opacity-60 disabled:cursor-not-allowed",
-            "flex items-center gap-2",
-          ].join(" ")}
-        >
-          {isSearching ? (
-            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <MdSearch size={18} />
-          )}
-          <span className="hidden sm:inline">{t.home.hero.trackButton}</span>
-        </motion.button>
+        {/* Demo ID hint */}
+        <p className="text-xs text-gray-400 mt-1 flex justify-start">
+          Try it out:{" "}
+          <button
+            type="button"
+            onClick={handleDemo}
+            className="font-mono font-medium text-primary hover:underline"
+          >
+            {DEMO_ID}
+          </button>
+        </p>
       </motion.form>
 
       <TrackingModal

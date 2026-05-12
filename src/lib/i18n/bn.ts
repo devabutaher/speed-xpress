@@ -11,6 +11,7 @@ export const bn: Dictionary = {
   nav: {
     home: "হোম",
     features: "বৈশিষ্ট্য",
+    blog: "ব্লগ",
     about: "আমাদের সম্পর্কে",
     contact: "যোগাযোগ",
     login: "লগইন",
@@ -44,6 +45,7 @@ export const bn: Dictionary = {
     registerNow: "অ্যাকাউন্ট তৈরি করুন",
     signInWithGoogle: "Google দিয়ে চালিয়ে যান",
     forgotPassword: "পাসওয়ার্ড ভুলে গেছেন?",
+    demoLogin: "ডেমো লগইন",
     noAccount: "অ্যাকাউন্ট নেই?",
     haveAccount: "ইতিমধ্যে অ্যাকাউন্ট আছে?",
     selectRole: "আমি একজন...",

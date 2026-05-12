@@ -83,7 +83,7 @@ const ThemeSwitch = () => {
           )
         }
       />
-      <motion.span
+      {/* <motion.span
         key={isDark ? "dark" : "light"}
         initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,7 +92,7 @@ const ThemeSwitch = () => {
         className="text-sm font-medium capitalize text-gray-600 dark:text-gray-400 select-none"
       >
         {isDark ? "Dark" : "Light"}
-      </motion.span>
+      </motion.span> */}
     </motion.div>
   );
 };

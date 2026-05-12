@@ -1,10 +1,5 @@
 "use client";
 
-// src/components/Dashboard/Home/DashboardPage.tsx
-// Single shared component rendered by all 4 role dashboard home pages.
-// Eliminates the 4×-duplicated AdminDashboardPage / MerchantDashboardPage /
-// RegularDashboardPage / RiderDashboardPage.
-
 import InvoiceStats from "@/components/Dashboard/Home/InvoiceStats";
 import LineChart from "@/components/Dashboard/Home/LineChart";
 import ParcelStats from "@/components/Dashboard/Home/ParcelStats";
@@ -50,7 +45,7 @@ const DashboardPage = () => {
       <motion.div variants={staggerItem}>
         <h1 className="text-2xl lg:text-3xl font-bold">
           {t.dashboard.welcome},{" "}
-          <span className="text-primary">
+          <span className="text-primary uppercase">
             {user?.displayName ?? user?.email?.split("@")[0] ?? "there"}
           </span>{" "}
           👋

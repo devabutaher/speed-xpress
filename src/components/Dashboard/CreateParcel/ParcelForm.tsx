@@ -122,7 +122,7 @@ const ParcelForm = ({
       userEmail: userInfo?.email ?? "",
       userName: userInfo?.name ?? "",
       userRole: userInfo?.role ?? "",
-      parcelId: parcelResponse.data.parcelId ?? "",
+      parcelId: parcelResponse.data._id ?? "",
       paymentMethod,
       amount: estimatedTotal,
       status: PaymentStatus.Pending,

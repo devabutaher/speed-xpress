@@ -109,7 +109,7 @@ const Footer = () => {
                   href="/contact-us"
                   label={t.footer.links.contactUs}
                 />
-                <FooterLink href="/blog" label="Blog" />
+                <FooterLink href="/blog" label={t.nav.blog} />
                 <FooterLink
                   href="/privacy-policy"
                   label={t.footer.links.privacyPolicy}

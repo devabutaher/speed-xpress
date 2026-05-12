@@ -96,6 +96,15 @@ const LocaleSwitcher = () => {
 // ── Main Navbar ───────────────────────────────────────────────────────────────
 const MainNavbar = () => {
   const t = useTranslation();
+
+  // Route → translation key mapping for nav labels
+  const NAV_LABELS: Record<string, string> = {
+    "/": t.nav.home,
+    "/features": t.nav.features,
+    "/blog": t.nav.blog,
+    "/about-us": t.nav.about,
+    "/contact-us": t.nav.contact,
+  };
   const { user, role, logOut, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -120,21 +129,22 @@ const MainNavbar = () => {
       maxWidth="xl"
     >
       {/* ── Mobile: toggle + logo ── */}
-      <NavbarContent>
+      <NavbarContent className="sm:hidden">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden text-dark dark:text-light"
+          className="text-dark dark:text-light"
         />
         <Logo />
       </NavbarContent>
 
-      {/* ── Desktop: center nav links ── */}
-      <NavbarContent className="hidden sm:flex gap-8" justify="center">
+      {/* ── Desktop: logo + nav links (left) ── */}
+      <NavbarContent className="hidden sm:flex gap-8">
+        <Logo />
         {mainNavbarData.map((item) => (
           <NavbarItem key={item.link} isActive={isActive(item.link)}>
             <DesktopNavLink
               href={item.link}
-              label={item.name}
+              label={NAV_LABELS[item.link] ?? item.name}
               active={isActive(item.link)}
             />
           </NavbarItem>
@@ -142,7 +152,7 @@ const MainNavbar = () => {
       </NavbarContent>
 
       {/* ── Desktop: right actions ── */}
-      <NavbarContent className="gap-3" justify="end">
+      <NavbarContent className="hidden sm:flex gap-3" justify="end">
         {/* Locale + Theme — always visible */}
         <NavbarItem className="hidden sm:flex items-center gap-3">
           <LocaleSwitcher />
@@ -210,7 +220,7 @@ const MainNavbar = () => {
           <MobileNavLink
             key={item.link}
             href={item.link}
-            label={item.name}
+            label={NAV_LABELS[item.link] ?? item.name}
             onClick={closeMenu}
           />
         ))}

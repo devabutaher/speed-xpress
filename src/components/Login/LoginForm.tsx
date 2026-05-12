@@ -85,7 +85,7 @@ const LoginForm = () => {
               }}
             >
               <FaRocket className="shrink-0" />
-              <span>Demo Login</span>
+              <span>{t.auth.demoLogin}</span>
             </SecondaryButton>
 
             <div className="flex items-center gap-3 text-xs text-gray-400">

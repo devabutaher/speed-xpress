@@ -1,16 +1,13 @@
 "use client";
 import InvoiceDetails from "@/components/Dashboard/Invoices/InvoiceDetails";
+import { useSingleInvoice } from "@/hooks/useSingleInvoice";
 import Loading from "@/ui/Loading";
 import SecondaryButton from "@/ui/SecondaryButton";
 import { useRouter } from "next/navigation";
 
 export default function InvoiceDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  // TODO: Add useSingleInvoice hook when available
-  // const { data, isLoading } = useSingleInvoice(params.id);
-
-  const isLoading = false;
-  const data = null;
+  const { data, isLoading } = useSingleInvoice(params.id);
 
   return (
     <div className="container-xl py-10 lg:py-16 space-y-8">
