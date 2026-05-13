@@ -49,7 +49,6 @@ const ThemeSwitch = () => {
   }, []);
 
   if (!mounted) {
-    // Render a placeholder that matches the switch size to avoid layout shift
     return (
       <div className="w-14 h-7 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
     );
@@ -64,11 +63,7 @@ const ThemeSwitch = () => {
   };
 
   return (
-    <motion.div
-      initial={false}
-      animate={{ opacity: 1 }}
-      className="flex items-center gap-2"
-    >
+    <motion.div initial={false} animate={{ opacity: 1 }}>
       <Switch
         isSelected={isDark}
         onValueChange={handleChange}
@@ -83,16 +78,6 @@ const ThemeSwitch = () => {
           )
         }
       />
-      {/* <motion.span
-        key={isDark ? "dark" : "light"}
-        initial={{ opacity: 0, y: -4 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 4 }}
-        transition={{ duration: 0.15 }}
-        className="text-sm font-medium capitalize text-gray-600 dark:text-gray-400 select-none"
-      >
-        {isDark ? "Dark" : "Light"}
-      </motion.span> */}
     </motion.div>
   );
 };

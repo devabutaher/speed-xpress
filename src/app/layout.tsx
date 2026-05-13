@@ -2,7 +2,7 @@ import AllProvider from "@/providers/AllProvider";
 import NextThemeProvider from "@/providers/NextThemeProvider";
 import { ChildrenProps } from "@/types/ChildrenProps";
 import type { Metadata, Viewport } from "next";
-import { Hind_Siliguri, Inter } from "next/font/google";
+import { Inter, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,9 +11,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const hindSiliguri = Hind_Siliguri({
-  subsets: ["latin", "bengali"],
-  weight: ["300", "400", "500", "600", "700"],
+const notoSansBengali = Noto_Sans_Bengali({
+  subsets: ["bengali"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-hind",
   display: "swap",
 });
@@ -85,7 +85,7 @@ export default function RootLayout({ children }: ChildrenProps) {
       <body
         className={`
           ${inter.variable}
-          ${hindSiliguri.variable}
+          ${notoSansBengali.variable}
           font-sans
           min-h-screen
           bg-light dark:bg-dark

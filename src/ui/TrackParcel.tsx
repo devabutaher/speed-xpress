@@ -61,22 +61,31 @@ const TrackParcel = () => {
       >
         <div className="flex items-stretch">
           <div className="relative flex-1">
-            <MdSearch
-              size={20}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-            />
+            <div className="absolute left-3 inset-y-0 flex items-center pointer-events-none">
+              <svg
+                className="w-5 h-5 text-gray-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="square"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="16.5" y1="16.5" x2="21" y2="21" />
+              </svg>
+            </div>
             <input
               {...register("id", {
                 required: "Parcel ID is required",
                 pattern: {
                   value: /^SX[A-Z0-9]{6}$/,
-                  message: "Invalid Parcel ID format (e.g. SXABC123)",
+                  message: "Invalid Parcel ID format (e.g. SX5ABF76)",
                 },
               })}
               className={[
                 "w-full pl-10 pr-4 py-3.5",
                 "border border-r-0 border-solid rounded-l-lg",
-                "bg-white/10 dark:bg-white/5 backdrop-blur-sm",
+                "bg-white dark:bg-gray-900",
                 "focus:outline-none focus:ring-2 focus:ring-primary/50",
                 "placeholder:text-gray-400 text-sm",
                 "transition-colors duration-200",
@@ -97,6 +106,18 @@ const TrackParcel = () => {
                 {errors.id.message}
               </motion.p>
             )}
+
+            {/* Demo ID inline suffix */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleDemo}
+                className="pointer-events-auto inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-medium transition-colors cursor-pointer"
+              >
+                <span className="opacity-60">Try</span>
+                <span className="font-mono font-semibold">{DEMO_ID}</span>
+              </button>
+            </div>
           </div>
 
           <motion.button
@@ -121,18 +142,6 @@ const TrackParcel = () => {
             <span className="hidden sm:inline">{t.home.hero.trackButton}</span>
           </motion.button>
         </div>
-
-        {/* Demo ID hint */}
-        <p className="text-xs text-gray-400 mt-1 flex justify-start">
-          Try it out:{" "}
-          <button
-            type="button"
-            onClick={handleDemo}
-            className="font-mono font-medium text-primary hover:underline"
-          >
-            {DEMO_ID}
-          </button>
-        </p>
       </motion.form>
 
       <TrackingModal

@@ -28,7 +28,8 @@ export const bn: Dictionary = {
     welcomeBack: "স্বাগতম",
     loginSubtitle: "আপনার স্পিড এক্সপ্রেস অ্যাকাউন্টে সাইন ইন করুন",
     registerTitle: "অ্যাকাউন্ট তৈরি করুন",
-    registerSubtitle: "স্পিড এক্সপ্রেসে যোগ দিন এবং স্মার্টভাবে শিপিং শুরু করুন",
+    registerSubtitle:
+      "স্পিড এক্সপ্রেসে যোগ দিন এবং স্মার্টভাবে শিপিং শুরু করুন",
     email: "ইমেইল",
     businessEmail: "ব্যবসায়িক ইমেইল",
     password: "পাসওয়ার্ড",
@@ -213,7 +214,7 @@ export const bn: Dictionary = {
       titleHighlight: "সহজ পার্সেল ব্যবস্থাপনা",
       description:
         "সহজেই পাঠান, গ্রহণ করুন এবং ট্র্যাক করুন। গ্রাহক, মার্চেন্ট এবং অ্যাডমিনদের জন্য কাস্টম ড্যাশবোর্ড।",
-      trackPlaceholder: "আপনার ট্র্যাকিং নম্বর লিখুন",
+      trackPlaceholder: "ট্র্যাকিং নম্বর",
       trackButton: "পার্সেল ট্র্যাক করুন",
     },
     whatWeOffer: {
@@ -228,7 +229,8 @@ export const bn: Dictionary = {
       warehouseStorageDesc:
         "ডেলিভারির জন্য প্রস্তুত না হওয়া পর্যন্ত আপনার পার্সেল ধরে রাখার জন্য নিরাপদ সুবিধা।",
       onlineTracking: "রিয়েল-টাইম ট্র্যাকিং",
-      onlineTrackingDesc: "পিকআপ থেকে ডেলিভারি পর্যন্ত রিয়েল-টাইমে ট্র্যাক করুন।",
+      onlineTrackingDesc:
+        "পিকআপ থেকে ডেলিভারি পর্যন্ত রিয়েল-টাইমে ট্র্যাক করুন।",
     },
     getStarted: {
       title: "শুরু করতে প্রস্তুত?",

@@ -24,8 +24,8 @@ const SelectDivision = ({
       (item) => item.division_id === findDivision?.id
     );
 
-    // Set the district
-    setDistrict(filteredDistricts[0].name);
+    // Set the district (default to first if available)
+    setDistrict(filteredDistricts.length > 0 ? filteredDistricts[0].name : "");
   };
 
   return (

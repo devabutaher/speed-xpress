@@ -8,7 +8,7 @@ const NextThemeProvider = ({ children }: PropsWithChildren) => {
   return (
     <NextUIProvider>
       <ThemeProvider
-        attribute="class"
+        attribute="data-theme"
         defaultTheme="dark"
         enableSystem
         disableTransitionOnChange={false}

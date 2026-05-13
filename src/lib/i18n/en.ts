@@ -211,7 +211,7 @@ export const en = {
       titleHighlight: "Effortless Parcel Management",
       description:
         "Send, receive, and track with ease. Tailored dashboards for customers, merchants, and admins. Your shortcut to efficient parcel management.",
-      trackPlaceholder: "Enter your tracking number",
+      trackPlaceholder: "Tracking number",
       trackButton: "Track Parcel",
     },
     whatWeOffer: {

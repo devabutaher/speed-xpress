@@ -32,12 +32,15 @@ function resolveRole(displayName: string | null | undefined): Role {
 
 const ALL_ROLES = Object.values(ROLES) as Role[];
 
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+export const AuthContext = createContext<AuthContextType>(
+  {} as AuthContextType,
+);
 
 const AuthProvider = ({ children }: ChildrenProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<Role | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -46,14 +49,14 @@ const AuthProvider = ({ children }: ChildrenProps) => {
     async (
       email: string,
       password: string,
-      displayName: string
+      displayName: string,
     ): Promise<{ user: User; role: Role } | null> => {
       setLoading(true);
       try {
         const { user: newUser } = await createUserWithEmailAndPassword(
           auth,
           email,
-          password
+          password,
         );
 
         await updateProfile(newUser, { displayName });
@@ -68,24 +71,27 @@ const AuthProvider = ({ children }: ChildrenProps) => {
         toast.error(
           message.includes("email")
             ? "This email is already registered"
-            : "Registration failed. Please try again."
+            : "Registration failed. Please try again.",
         );
         return null;
       } finally {
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   const loginUser = useCallback(
-    async (email: string, password: string): Promise<{ user: User; role: Role } | null> => {
+    async (
+      email: string,
+      password: string,
+    ): Promise<{ user: User; role: Role } | null> => {
       setLoading(true);
       try {
         const { user: loggedInUser } = await signInWithEmailAndPassword(
           auth,
           email,
-          password
+          password,
         );
 
         const resolvedRole = resolveRole(loggedInUser.displayName);
@@ -98,7 +104,7 @@ const AuthProvider = ({ children }: ChildrenProps) => {
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   const googleSignIn = useCallback(async (): Promise<void> => {
@@ -169,11 +175,18 @@ const AuthProvider = ({ children }: ChildrenProps) => {
         setRole(null);
       }
 
-      setLoading(false);
+      setAuthReady(true);
     });
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (authReady) {
+      const timer = setTimeout(() => setLoading(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [authReady]);
 
   const value: AuthContextType = {
     user,

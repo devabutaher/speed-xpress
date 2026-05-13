@@ -73,7 +73,7 @@ const RegisterForm = ({ role }: { role: Role }) => {
       const userResponse = await saveUser(userData);
 
       if (userResponse.code === "success") {
-        toast.success(t.auth.success.register);
+        toast.success("Redirecting to dashboard...");
 
         if (userResponse.data.role === "merchant") {
           const shopData: ShopType = {
@@ -93,13 +93,13 @@ const RegisterForm = ({ role }: { role: Role }) => {
 
           if (shopResponse.code === "success") {
             reset();
-            router.push(getDashboardPath(result.role));
+            setTimeout(() => router.push(getDashboardPath(result.role)), 300);
           } else {
             console.error(shopResponse.error);
           }
         } else {
           reset();
-          router.push(getDashboardPath(result.role));
+          setTimeout(() => router.push(getDashboardPath(result.role)), 300);
         }
       } else {
         console.error(userResponse.error);

@@ -162,7 +162,7 @@ const UserTable = () => {
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="action-items">
-                  <DropdownItem
+                  <DropdownItem key="view"
                     className="text-left"
                     textValue="view"
                     as="button"
@@ -170,7 +170,7 @@ const UserTable = () => {
                   >
                     View
                   </DropdownItem>
-                  <DropdownItem
+                  <DropdownItem key="delete"
                     textValue="delete"
                     className="text-left"
                     as="button"

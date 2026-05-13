@@ -13,6 +13,7 @@ import {
   NavbarItem,
   NavbarMenu,
   NavbarMenuToggle,
+  Skeleton,
 } from "@nextui-org/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
@@ -169,8 +170,8 @@ const MainNavbar = () => {
               exit={{ opacity: 0 }}
               className="flex gap-2"
             >
-              <div className="w-20 h-9 rounded-md skeleton" />
-              <div className="w-24 h-9 rounded-md skeleton" />
+              <Skeleton className="rounded-md w-16 h-9" />
+              <Skeleton className="rounded-md w-16 h-9" />
             </motion.div>
           ) : user ? (
             <motion.div

@@ -148,8 +148,8 @@ const DashboardNavbar = () => {
               as="button"
               isBordered
               showFallback
-              src={user?.photoURL ?? "U"}
-              name={user?.displayName ?? "U"}
+              src={user?.photoURL ?? undefined}
+              name={user?.email?.charAt(0).toUpperCase() ?? "U"}
               className="transition-transform hover:scale-105 text-gray-600 dark:text-light"
             />
           </DropdownTrigger>

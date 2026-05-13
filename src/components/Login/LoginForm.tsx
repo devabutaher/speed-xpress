@@ -37,8 +37,8 @@ const LoginForm = () => {
     const result = await loginUser(email, password);
     if (result) {
       reset();
-      toast.success(t.auth.success.signIn);
-      router.push(getDashboardPath(result.role));
+      toast.success("Redirecting to dashboard...");
+      setTimeout(() => router.push(getDashboardPath(result.role)), 300);
     }
   };
 
@@ -46,14 +46,6 @@ const LoginForm = () => {
     <div className="w-full sm:w-[28rem] mx-auto">
       <Card radius="sm" className="shadow-card-hover">
         <CardBody className="p-6 space-y-5">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="block text-center text-xl font-extrabold tracking-tight select-none"
-          >
-            SPEED<span className="text-primary">XPRESS</span>
-          </Link>
-
           <div className="text-center space-y-1">
             <h1 className="text-2xl font-bold">{t.auth.welcomeBack}</h1>
             <p className="text-sm text-gray-500">{t.auth.loginSubtitle}</p>
@@ -79,8 +71,11 @@ const LoginForm = () => {
               onClick={async () => {
                 const result = await loginUser("demo@gmail.com", "121212");
                 if (result) {
-                  toast.success(t.auth.success.signIn);
-                  router.push(getDashboardPath(result.role));
+                  toast.success("Redirecting to dashboard...");
+                  setTimeout(
+                    () => router.push(getDashboardPath(result.role)),
+                    500,
+                  );
                 }
               }}
             >

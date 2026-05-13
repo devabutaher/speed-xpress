@@ -50,7 +50,7 @@ const AuthLayout = ({ children }: ChildrenProps) => {
           height={imageConfig.width}
           alt={imageConfig.alt}
           priority
-          className="w-full max-w-md drop-shadow-xl"
+          className="w-full max-w-xl drop-shadow-xl"
         />
       </motion.div>
 
