@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import {
   fadeLeft,
   inViewProps,
@@ -15,6 +16,9 @@ import truck from "/public/assets/images/mobile_truck.png";
 import worldwide from "/public/assets/images/worldwide.png";
 
 const OrderNow = () => {
+  const t = useTranslation();
+  const content = t.home.orderNow;
+
   return (
     <section className="container-xl pb-20">
       <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -67,21 +71,19 @@ const OrderNow = () => {
           className="flex flex-col justify-center text-center md:text-left space-y-6"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight">
-            Order Now &amp; Benefit Up To{" "}
-            <span className="text-primary">30% Off</span>
+            {content.title}
           </h2>
 
           <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
-            Track the status of your payments, manage shipments, and enjoy
-            exclusive discounts when you place bulk orders through Speed Xpress.
+            {content.description}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:justify-start justify-center">
             <PrimaryButton href="/login" size="md">
-              Get Started
+              {content.getStarted}
             </PrimaryButton>
             <SecondaryButton href="/register" size="md">
-              Order Now
+              {content.orderNow}
             </SecondaryButton>
           </div>
         </motion.div>

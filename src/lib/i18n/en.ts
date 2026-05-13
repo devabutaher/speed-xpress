@@ -235,6 +235,99 @@ export const en = {
         "Join thousands of customers and merchants using Speed Xpress today.",
       cta: "Start Shipping",
     },
+    feature: {
+      title: "Deliver Your Logistics Safely & Quickly",
+      subtitle:
+        "Here's why you should choose Speed Xpress over other shipping agencies for your logistics needs.",
+      protectedPackages: "Always Protected Packages",
+      protectedPackagesDesc:
+        "We guarantee the safety of your packages from pickup to delivery, using secure handling and trusted carrier partners.",
+      liveTracking: "Live Package Tracking",
+      liveTrackingDesc:
+        "Monitor your goods in real time — anywhere, anytime — with pinpoint accuracy and instant status updates.",
+      customerSupport: "24/7 Customer Support",
+      customerSupportDesc:
+        "Our dedicated support team is always available to help you resolve any issue with your shipments, day or night.",
+    },
+    logoCloud: {
+      title: "Our Awesome Partners",
+    },
+    orderNow: {
+      title: "Order Now & Benefit Up To 30% Off",
+      description:
+        "Track the status of your payments, manage shipments, and enjoy exclusive discounts when you place bulk orders through Speed Xpress.",
+      getStarted: "Get Started",
+      orderNow: "Order Now",
+    },
+    orderPlace: {
+      title: "Customers Can Place Orders Online",
+      description:
+        "Streamline the order process with seamless online ordering — reducing manual intervention and giving customers full visibility from placement to delivery.",
+      getStarted: "Get Started",
+      orderNow: "Order Now",
+    },
+    processes: {
+      title: "Streamline Logistics Processes",
+      description:
+        "Streamline logistics processes such as inventory management, order tracking, and delivery scheduling — all from one intuitive dashboard.",
+      getStarted: "Get Started",
+      orderNow: "Order Now",
+    },
+    review: {
+      title: "What Our Clients Say",
+      by: "By",
+    },
+    whatSend: {
+      title: "What Can You Send",
+      gift: "Gift",
+      document: "Document",
+      package: "Package",
+      accessories: "Accessories",
+      electronics: "Electronics",
+    },
+    faq: {
+      badge: "FAQ",
+      title: "Get Your",
+      titleHighlight: "Queries Solved",
+      customerTab: "For Customers",
+      riderTab: "For Riders",
+      customer: [
+        {
+          q: "How long does it take for my package to be delivered?",
+          a: "Delivery times vary depending on the destination and the service you choose. We offer standard and express options, and our team will provide you with accurate estimates based on your specific requirements.",
+        },
+        {
+          q: "Can I request a quote for my shipping needs?",
+          a: "Absolutely! Use our online quote request form to provide shipment details such as origin, destination, weight, and dimensions. Our team will respond with a customized quote.",
+        },
+        {
+          q: "How do you ensure the safety and security of my goods?",
+          a: "We have robust security measures including surveillance systems, trained personnel, and secure facilities. We work with trusted partners to ensure safe handling and transportation.",
+        },
+        {
+          q: "Can you accommodate special handling requirements or sensitive items?",
+          a: "Yes — whether you have fragile goods, hazardous materials, temperature-sensitive products, or oversized items, we have the expertise and resources to handle them safely.",
+        },
+      ],
+      rider: [
+        {
+          q: "How do I sign up to become a rider?",
+          a: "Visit our Sign Up page and register as a Rider. Follow the on-screen instructions, provide the necessary information, and submit required documents. Once approved, you can start taking assignments.",
+        },
+        {
+          q: "What types of vehicles are accepted for deliveries?",
+          a: "We accept bicycles, scooters, motorbikes, and cars. Vehicle requirements may vary by location. Ensure your vehicle meets our safety and reliability criteria.",
+        },
+        {
+          q: "How and when do I get paid for deliveries?",
+          a: "Payments are processed on a regular schedule based on distance, delivery time, and applicable bonuses. You'll receive earnings through the payment method set up in your rider account.",
+        },
+        {
+          q: "What support is available if I encounter issues during a delivery?",
+          a: "Our support team is available through the app or website to assist with any delivery issues. We also provide training resources to help you handle common challenges effectively.",
+        },
+      ],
+    },
   },
 
   footer: {

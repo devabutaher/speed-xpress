@@ -1,50 +1,15 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import { fadeUp, inViewProps } from "@/lib/motion";
 import { Accordion, AccordionItem, Tab, Tabs } from "@nextui-org/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 
-const customerFAQs = [
-  {
-    q: "How long does it take for my package to be delivered?",
-    a: "Delivery times vary depending on the destination and the service you choose. We offer standard and express options, and our team will provide you with accurate estimates based on your specific requirements.",
-  },
-  {
-    q: "Can I request a quote for my shipping needs?",
-    a: "Absolutely! Use our online quote request form to provide shipment details such as origin, destination, weight, and dimensions. Our team will respond with a customized quote.",
-  },
-  {
-    q: "How do you ensure the safety and security of my goods?",
-    a: "We have robust security measures including surveillance systems, trained personnel, and secure facilities. We work with trusted partners to ensure safe handling and transportation.",
-  },
-  {
-    q: "Can you accommodate special handling requirements or sensitive items?",
-    a: "Yes — whether you have fragile goods, hazardous materials, temperature-sensitive products, or oversized items, we have the expertise and resources to handle them safely.",
-  },
-];
+type FAQItem = { q: string; a: string };
 
-const riderFAQs = [
-  {
-    q: "How do I sign up to become a rider?",
-    a: "Visit our Sign Up page and register as a Rider. Follow the on-screen instructions, provide the necessary information, and submit required documents. Once approved, you can start taking assignments.",
-  },
-  {
-    q: "What types of vehicles are accepted for deliveries?",
-    a: "We accept bicycles, scooters, motorbikes, and cars. Vehicle requirements may vary by location. Ensure your vehicle meets our safety and reliability criteria.",
-  },
-  {
-    q: "How and when do I get paid for deliveries?",
-    a: "Payments are processed on a regular schedule based on distance, delivery time, and applicable bonuses. You'll receive earnings through the payment method set up in your rider account.",
-  },
-  {
-    q: "What support is available if I encounter issues during a delivery?",
-    a: "Our support team is available through the app or website to assist with any delivery issues. We also provide training resources to help you handle common challenges effectively.",
-  },
-];
-
-const FAQAccordion = ({ items }: { items: typeof customerFAQs }) => (
+const FAQAccordion = ({ items }: { items: FAQItem[] }) => (
   <Accordion
     variant="shadow"
     defaultExpandedKeys={["0"]}
@@ -63,6 +28,8 @@ const FAQAccordion = ({ items }: { items: typeof customerFAQs }) => (
 );
 
 const FAQ = () => {
+  const t = useTranslation();
+  const faq = t.home.faq;
   const [tab, setTab] = useState("customer");
 
   return (
@@ -76,11 +43,11 @@ const FAQ = () => {
         <div className="flex justify-center items-center gap-2">
           <span className="w-1 h-5 bg-primary rounded-full" />
           <p className="text-sm font-bold tracking-widest uppercase text-primary">
-            FAQ
+            {faq.badge}
           </p>
         </div>
         <h2 className="text-3xl lg:text-5xl font-extrabold">
-          Get Your <span className="text-primary">Queries Solved</span>
+          {faq.title} <span className="text-primary">{faq.titleHighlight}</span>
         </h2>
       </motion.div>
 
@@ -111,8 +78,8 @@ const FAQ = () => {
             onSelectionChange={(k) => setTab(String(k))}
             className="mb-4"
           >
-            <Tab key="customer" title="For Customers" />
-            <Tab key="rider" title="For Riders" />
+            <Tab key="customer" title={faq.customerTab} />
+            <Tab key="rider" title={faq.riderTab} />
           </Tabs>
 
           <AnimatePresence mode="wait">
@@ -124,7 +91,7 @@ const FAQ = () => {
               transition={{ duration: 0.2 }}
             >
               <FAQAccordion
-                items={tab === "customer" ? customerFAQs : riderFAQs}
+                items={(tab === "customer" ? faq.customer : faq.rider) as FAQItem[]}
               />
             </motion.div>
           </AnimatePresence>

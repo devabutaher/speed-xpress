@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import {
   fadeUp,
   inViewProps,
@@ -12,14 +13,17 @@ import { IoDocumentTextSharp } from "react-icons/io5";
 import { LuPackage } from "react-icons/lu";
 
 const items = [
-  { name: "Gift", icon: FaGift },
-  { name: "Document", icon: IoDocumentTextSharp },
-  { name: "Package", icon: LuPackage },
-  { name: "Accessories", icon: FaSitemap },
-  { name: "Electronics", icon: FaDesktop },
+  { key: "gift", icon: FaGift },
+  { key: "document", icon: IoDocumentTextSharp },
+  { key: "package", icon: LuPackage },
+  { key: "accessories", icon: FaSitemap },
+  { key: "electronics", icon: FaDesktop },
 ];
 
 const WhatSend = () => {
+  const t = useTranslation();
+  const ws = t.home.whatSend;
+
   return (
     <section className="container-xl pb-20 space-y-10">
       <motion.h2
@@ -27,7 +31,7 @@ const WhatSend = () => {
         variants={fadeUp}
         className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center"
       >
-        What <span className="text-primary">Can</span> You Send
+        {ws.title}
       </motion.h2>
 
       <motion.div
@@ -35,9 +39,9 @@ const WhatSend = () => {
         {...inViewProps}
         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
       >
-        {items.map(({ name, icon: Icon }) => (
+        {items.map(({ key, icon: Icon }) => (
           <motion.div
-            key={name}
+            key={key}
             variants={staggerItem}
             whileHover={{ y: -6, scale: 1.03 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -50,7 +54,7 @@ const WhatSend = () => {
               />
             </div>
             <p className="text-sm md:text-base font-semibold text-center uppercase tracking-wide">
-              {name}
+              {ws[key as keyof typeof ws]}
             </p>
           </motion.div>
         ))}

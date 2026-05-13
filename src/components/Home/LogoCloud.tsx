@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import {
   fadeUp,
   inViewProps,
@@ -22,6 +23,8 @@ const partners = [
 ];
 
 const LogoCloud = () => {
+  const t = useTranslation();
+
   return (
     <section className="container-xl pb-20 space-y-10">
       <motion.h2
@@ -29,7 +32,7 @@ const LogoCloud = () => {
         variants={fadeUp}
         className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center"
       >
-        Our Awesome <span className="text-primary">Partners</span>
+        {t.home.logoCloud.title}
       </motion.h2>
 
       <motion.div

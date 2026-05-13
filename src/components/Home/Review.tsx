@@ -2,6 +2,7 @@
 
 import { reviewsData } from "@/data/reviewsData";
 import { fadeUp, inViewProps } from "@/lib/motion";
+import { useTranslation } from "@/lib/i18n";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -12,6 +13,7 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 const AUTOPLAY_INTERVAL = 4000;
 
 const Review = () => {
+  const t = useTranslation();
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [step, setStep] = useState(1);
@@ -85,7 +87,7 @@ const Review = () => {
           </p>
           <div>
             <p className="font-semibold text-sm">
-              By <span className="text-primary">{review.Name}</span>
+              {t.home.review.by} <span className="text-primary">{review.Name}</span>
             </p>
             <p className="text-xs text-gray-500">{review.Profession}</p>
           </div>
@@ -101,7 +103,7 @@ const Review = () => {
         variants={fadeUp}
         className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center"
       >
-        What Our <span className="text-primary">Clients</span> Say
+        {t.home.review.title}
       </motion.h2>
 
       <div className="relative max-w-5xl mx-auto">
