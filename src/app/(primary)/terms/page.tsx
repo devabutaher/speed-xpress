@@ -27,66 +27,68 @@ export default function TermsPage() {
           1. Acceptance of Terms
         </h2>
         <p>
-          By accessing or using the Speed Xpress platform, you agree to be bound by
-          these Terms of Service. If you do not agree with any part of these terms,
-          you may not use our services.
+          By accessing or using the Speed Xpress platform, you agree to be bound
+          by these Terms of Service. If you do not agree with any part of these
+          terms, you may not use our services.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
           2. Account Registration
         </h2>
         <p>
-          You must provide accurate and complete information when creating an account.
-          You are responsible for maintaining the confidentiality of your login
-          credentials and for all activities that occur under your account. Notify
-          us immediately of any unauthorized use.
+          You must provide accurate and complete information when creating an
+          account. You are responsible for maintaining the confidentiality of
+          your login credentials and for all activities that occur under your
+          account. Notify us immediately of any unauthorized use.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
           3. Services
         </h2>
         <p>
-          Speed Xpress provides a parcel management platform that connects senders,
-          recipients, merchants, and delivery riders. We facilitate the creation,
-          tracking, and management of parcels but are not liable for the actions
-          of independent delivery partners.
+          Speed Xpress provides a parcel management platform that connects
+          senders, recipients, merchants, and delivery riders. We facilitate the
+          creation, tracking, and management of parcels but are not liable for
+          the actions of independent delivery partners.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
           4. User Obligations
         </h2>
         <p>
-          You agree not to use the platform for any unlawful purpose, to not upload
-          prohibited items, to provide accurate shipment information, and to comply
-          with all applicable laws and regulations regarding the shipment of goods.
+          You agree not to use the platform for any unlawful purpose, to not
+          upload prohibited items, to provide accurate shipment information, and
+          to comply with all applicable laws and regulations regarding the
+          shipment of goods.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
           5. Payment Terms
         </h2>
         <p>
-          All fees for services are clearly displayed before you confirm a shipment.
-          Payments are processed securely through our payment partners. Refunds are
-          handled in accordance with our refund policy, which is available upon request.
+          All fees for services are clearly displayed before you confirm a
+          shipment. Payments are processed securely through our payment
+          partners. Refunds are handled in accordance with our refund policy,
+          which is available upon request.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
           6. Limitation of Liability
         </h2>
         <p>
-          Speed Xpress shall not be liable for any indirect, incidental, special,
-          consequential, or punitive damages arising from your use of the platform.
-          Our total liability is limited to the amount paid for the specific service
-          giving rise to the claim.
+          Speed Xpress shall not be liable for any indirect, incidental,
+          special, consequential, or punitive damages arising from your use of
+          the platform. Our total liability is limited to the amount paid for
+          the specific service giving rise to the claim.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
           7. Termination
         </h2>
         <p>
-          We reserve the right to suspend or terminate your account at any time for
-          violation of these terms or for any other reason. Upon termination, your
-          right to use the platform immediately ceases.
+          We reserve the right to suspend or terminate your account at any time
+          for violation of these terms or for any other reason. Upon
+          termination, your right to use the platform immediately ceases.
         </p>
 
         <h2 className="text-xl font-bold text-dark dark:text-light">
@@ -95,10 +97,10 @@ export default function TermsPage() {
         <p>
           For questions about these terms, contact us at{" "}
           <a
-            href="mailto:teamcodeartisans@gmail.com"
+            href="mailto:code.abutaher@gmail.com"
             className="text-primary hover:underline"
           >
-            teamcodeartisans@gmail.com
+            code.abutaher@gmail.com
           </a>
           .
         </p>

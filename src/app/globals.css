@@ -244,3 +244,31 @@ h6 {
     background-position: 200% 0;
   }
 }
+
+.embla__viewport {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+}
+
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+/* For tablets and up, show 2 cards */
+@media (min-width: 640px) {
+  .embla__slide {
+    flex: 0 0 50%;
+  }
+}
+
+/* For desktops and up, show 3 cards */
+@media (min-width: 1024px) {
+  .embla__slide {
+    flex: 0 0 33.333%;
+  }
+}

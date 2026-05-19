@@ -38,7 +38,7 @@ const WhatWeOffer = () => {
   const offer = t.home.whatWeOffer;
 
   return (
-    <section className="container-xl pb-20">
+    <section className="container-xl pb-24">
       <div className="border border-gray-200 dark:border-gray-800 md:p-10 p-5 rounded-2xl bg-white dark:bg-gray-950 shadow-card">
         {/* Section header */}
         <div className="grid md:grid-cols-2 gap-6 pb-10">
@@ -50,7 +50,7 @@ const WhatWeOffer = () => {
             <span className="inline-flex items-center px-5 py-2 rounded-full border border-primary text-primary text-sm font-bold uppercase tracking-wider">
               {offer.badge}
             </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold">
+            <h2 className="text-3xl md:text-4xl font-extrabold leading-snug">
               {offer.title}
             </h2>
           </motion.div>

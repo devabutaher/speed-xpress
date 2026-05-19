@@ -12,7 +12,7 @@ const Processes = () => {
   const content = t.home.processes;
 
   return (
-    <section className="container-xl pb-20">
+    <section className="container-xl pb-24">
       <div className="grid md:grid-cols-2 gap-12 items-center">
         {/* Image */}
         <motion.div
@@ -35,7 +35,7 @@ const Processes = () => {
           variants={fadeLeft}
           className="flex flex-col justify-center text-center md:text-left space-y-6"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-snug">
             {content.title}
           </h2>
 

@@ -35,14 +35,14 @@ const Feature = () => {
   const feat = t.home.feature;
 
   return (
-    <section className="container-xl pb-20">
+    <section className="container-xl pb-24">
       <div className="border border-gray-200 dark:border-gray-800 rounded-2xl shadow-card p-6 sm:p-10">
         {/* Header row */}
         <div className="flex flex-col md:flex-row justify-between gap-8 mb-10">
           <motion.h2
             {...inViewProps}
             variants={fadeUp}
-            className="text-3xl lg:text-4xl font-extrabold max-w-sm leading-tight"
+            className="text-3xl lg:text-4xl font-extrabold leading-snug max-w-sm"
           >
             {feat.title}
           </motion.h2>

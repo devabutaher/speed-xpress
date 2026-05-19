@@ -25,11 +25,11 @@ const WhatSend = () => {
   const ws = t.home.whatSend;
 
   return (
-    <section className="container-xl pb-20 space-y-10">
+    <section className="container-xl pb-24 space-y-10">
       <motion.h2
         {...inViewProps}
         variants={fadeUp}
-        className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center"
+        className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-snug text-center"
       >
         {ws.title}
       </motion.h2>

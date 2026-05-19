@@ -30,7 +30,7 @@ const Hero = () => {
           <motion.h1
             variants={fadeUp}
             custom={0.05}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-snug tracking-tight"
           >
             {t.home.hero.title}{" "}
             <span className="text-gradient-brand block sm:inline">

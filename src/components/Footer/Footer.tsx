@@ -85,13 +85,13 @@ const Footer = () => {
                 href="tel:+8801905043478"
                 className="block text-sm text-primary font-medium hover:underline"
               >
-                +880 1905-043478
+                +880 1626441900
               </a>
               <a
-                href="mailto:teamcodeartisans@gmail.com"
+                href="mailto:code.abutaher@gmail.com"
                 className="block text-sm text-primary font-medium hover:underline"
               >
-                teamcodeartisans@gmail.com
+                code.abutaher@gmail.com
               </a>
             </div>
           </div>

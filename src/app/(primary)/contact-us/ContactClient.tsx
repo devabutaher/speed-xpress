@@ -15,14 +15,14 @@ const contactDetails = [
   {
     icon: MdPhone,
     title: "Phone",
-    lines: ["+880 1905-043478"],
+    lines: ["+880 1626441900"],
     href: "tel:+8801905043478",
   },
   {
     icon: MdEmail,
     title: "Email",
-    lines: ["teamcodeartisans@gmail.com"],
-    href: "mailto:teamcodeartisans@gmail.com",
+    lines: ["code.abutaher@gmail.com"],
+    href: "mailto:code.abutaher@gmail.com",
   },
   {
     icon: MdLocationOn,

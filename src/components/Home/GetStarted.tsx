@@ -26,7 +26,7 @@ const GetStarted = () => {
           variants={staggerItem}
           className="space-y-4 max-w-xl mx-auto"
         >
-          <h2 className="text-3xl lg:text-4xl font-extrabold leading-tight">
+          <h2 className="text-3xl lg:text-4xl font-extrabold leading-snug">
             {t.home.getStarted.title}
           </h2>
           <p className="text-gray-500 dark:text-gray-400">
@@ -44,12 +44,12 @@ const GetStarted = () => {
         >
           <Image
             src={delivery}
-            className="w-full max-w-4xl h-56 md:h-96 object-cover rounded-2xl shadow-2xl"
+            className="w-full h-56 md:h-96 object-cover rounded-2xl shadow-2xl"
             width={2000}
             height={800}
             alt="Speed Xpress delivery service"
             placeholder="blur"
-            sizes="(max-width: 768px) 100vw, 80vw"
+            sizes="100vw"
           />
         </motion.div>
       </motion.div>

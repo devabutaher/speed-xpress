@@ -14,8 +14,8 @@ import {
 } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import {
-  MdCheck,
   MdCancel,
+  MdCheck,
   MdDirectionsBike,
   MdLocalShipping,
   MdOutlineCreateNewFolder,
@@ -34,10 +34,10 @@ const STEPS = [
 ] as const;
 
 const STATUS_PROGRESS: Partial<Record<Status, number>> = {
-  [Status.Pending]: 25,
-  [Status.Accepted]: 45,
-  [Status.Picked]: 65,
-  [Status.Delivered]: 100,
+  [Status.Pending]: 5,
+  [Status.Accepted]: 30,
+  [Status.Picked]: 55,
+  [Status.Delivered]: 75,
   [Status.Canceled]: 100,
 };
 

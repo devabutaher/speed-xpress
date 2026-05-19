@@ -168,13 +168,7 @@ const DashboardNavbar = () => {
                   {user?.email}
                 </p>
                 {user?.emailVerified && (
-                  <Checkbox
-                    defaultSelected
-                    radius="full"
-                    size="sm"
-                    isReadOnly
-                    className="mt-1"
-                  >
+                  <Checkbox defaultSelected radius="full" size="sm" isReadOnly>
                     <span className="text-xs text-green-500">Verified</span>
                   </Checkbox>
                 )}

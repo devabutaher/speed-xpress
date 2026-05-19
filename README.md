@@ -110,12 +110,12 @@ To run this project, you will need to add the following environment variables to
 
 ## Feedback
 
-If you have any feedback, please reach out to us at teamcodeartisans@gmail.com
+If you have any feedback, please reach out to us at code.abutaher@gmail.com
 
 
 ## Support
 
-For support, email teamcodeartisans@gmail.com or join our Slack channel.
+For support, email code.abutaher@gmail.com or join our Slack channel.
 
 
 ## License

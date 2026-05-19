@@ -122,7 +122,6 @@ const MainNavbar = () => {
 
   return (
     <Navbar
-      shouldHideOnScroll
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
@@ -138,9 +137,13 @@ const MainNavbar = () => {
         <Logo />
       </NavbarContent>
 
-      {/* ── Desktop: logo + nav links (left) ── */}
-      <NavbarContent className="hidden sm:flex gap-8">
+      {/* ── Desktop: logo (left) ── */}
+      <NavbarContent className="hidden sm:flex">
         <Logo />
+      </NavbarContent>
+
+      {/* ── Desktop: nav links (center) ── */}
+      <NavbarContent className="hidden sm:flex gap-8" justify="center">
         {mainNavbarData.map((item) => (
           <NavbarItem key={item.link} isActive={isActive(item.link)}>
             <DesktopNavLink

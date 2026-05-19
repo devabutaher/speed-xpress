@@ -14,23 +14,23 @@ const partners = [
   {
     src: "/assets/images/logo/ajkerdeal.png",
     alt: "Ajker Deal",
-    width: "w-36",
+    width: "w-32",
   },
-  { src: "/assets/images/logo/paperfly.png", alt: "Paperfly", width: "w-40" },
-  { src: "/assets/images/logo/daraz.png", alt: "Daraz", width: "w-32" },
-  { src: "/assets/images/logo/pathao.png", alt: "Pathao", width: "w-32" },
-  { src: "/assets/images/logo/redx.png", alt: "RedX", width: "w-32" },
+  { src: "/assets/images/logo/paperfly.png", alt: "Paperfly", width: "w-32" },
+  { src: "/assets/images/logo/daraz.png", alt: "Daraz", width: "w-28" },
+  { src: "/assets/images/logo/pathao.png", alt: "Pathao", width: "w-28" },
+  { src: "/assets/images/logo/redx.png", alt: "RedX", width: "w-28" },
 ];
 
 const LogoCloud = () => {
   const t = useTranslation();
 
   return (
-    <section className="container-xl pb-20 space-y-10">
+    <section className="container-xl pb-24 space-y-10">
       <motion.h2
         {...inViewProps}
         variants={fadeUp}
-        className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center"
+        className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-snug text-center"
       >
         {t.home.logoCloud.title}
       </motion.h2>

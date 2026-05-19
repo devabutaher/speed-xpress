@@ -59,14 +59,15 @@ export const INVOICE_STATUS = {
   REFUNDED: "refunded",
 } as const;
 
-export type InvoiceStatus = (typeof INVOICE_STATUS)[keyof typeof INVOICE_STATUS];
+export type InvoiceStatus =
+  (typeof INVOICE_STATUS)[keyof typeof INVOICE_STATUS];
 
 export const APP_CONFIG = {
   name: "Speed Xpress",
   shortName: "SX",
   tagline: "Swift, Secure, Seamless",
-  phone: "+880 1905-043478",
-  email: "teamcodeartisans@gmail.com",
+  phone: "+880 1626441900",
+  email: "code.abutaher@gmail.com",
   supportedLocales: ["en", "bn"] as const,
   defaultLocale: "en" as const,
 } as const;

@@ -291,6 +291,7 @@ export const en = {
       titleHighlight: "Queries Solved",
       customerTab: "For Customers",
       riderTab: "For Riders",
+      merchantTab: "For Merchants",
       customer: [
         {
           q: "How long does it take for my package to be delivered?",
@@ -325,6 +326,24 @@ export const en = {
         {
           q: "What support is available if I encounter issues during a delivery?",
           a: "Our support team is available through the app or website to assist with any delivery issues. We also provide training resources to help you handle common challenges effectively.",
+        },
+      ],
+      merchant: [
+        {
+          q: "How do I register my shop on Speed Xpress?",
+          a: "Creating a merchant account is easy. Sign up with your business email, provide your shop details, and once approved you can start creating parcels and managing shipments right away.",
+        },
+        {
+          q: "Can I create bulk shipments for my e-commerce orders?",
+          a: "Yes — you can create parcels for multiple orders at once. The platform allows you to manage bulk shipments, print labels in batch, and streamline your fulfillment process.",
+        },
+        {
+          q: "How do I track orders I've shipped to customers?",
+          a: "Every parcel gets a unique tracking ID. You and your customers can use it to track the shipment status in real time directly from the dashboard or the tracking page.",
+        },
+        {
+          q: "What payment options are available for shipping fees?",
+          a: "We offer both online payment via Stripe and cash on delivery. You can choose the most convenient method when creating each parcel.",
         },
       ],
     },
