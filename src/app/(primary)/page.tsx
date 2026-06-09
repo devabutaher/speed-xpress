@@ -5,6 +5,7 @@ import Hero from "@/components/Home/Hero/Hero";
 import LogoCloud from "@/components/Home/LogoCloud";
 import OrderNow from "@/components/Home/OrderNow";
 import OrderPlace from "@/components/Home/OrderPlace";
+import PricingCalculator from "@/components/Home/PricingCalculator";
 import Processes from "@/components/Home/Processes";
 import Review from "@/components/Home/Review";
 import WhatSend from "@/components/Home/WhatSend";
@@ -27,6 +28,7 @@ const HomePage = () => {
     <>
       <Hero />
       <WhatWeOffer />
+      <PricingCalculator />
       <Processes />
       <Feature />
       <WhatSend />

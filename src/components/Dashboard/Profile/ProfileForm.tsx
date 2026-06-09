@@ -77,7 +77,7 @@ const ProfileForm = ({ onClose }: OnCloseProps) => {
             message: "Invalid phone",
           },
           minLength: { value: 7, message: "Phone too short" },
-          maxLength: { value: 15, message: "Phone too long" },
+          maxLength: { value: 20, message: "Phone too long" },
         }}
       />
       <CustomInput

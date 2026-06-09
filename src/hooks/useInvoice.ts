@@ -10,10 +10,15 @@ export const useInvoice = () => {
   const {
     data: invoices = [] as InvoiceType[],
     isLoading,
+    isError,
+    error,
+    isFetching,
+    dataUpdatedAt,
     refetch,
   } = useQuery({
     queryKey: QUERY_KEYS.invoices(user?.email ?? undefined),
     enabled: !!user?.email && !!role,
+    refetchInterval: 30_000,
     queryFn: async (): Promise<InvoiceType[]> => {
       const response =
         role === ROLES.ADMIN
@@ -21,9 +26,21 @@ export const useInvoice = () => {
           : await getInvoiceByEmail(user!.email!);
 
       if (response.code === "success") return response.data ?? [];
-      throw new Error("Failed to fetch invoices");
+      const serverMsg =
+        response.error instanceof Error
+          ? response.error.message
+          : "Failed to fetch invoices";
+      throw new Error(serverMsg);
     },
   });
 
-  return { invoices, isLoading, refetch };
+  return {
+    invoices,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+    dataUpdatedAt,
+    refetch,
+  };
 };

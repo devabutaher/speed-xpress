@@ -11,6 +11,9 @@ export const useUserInfo = () => {
   const {
     data: userInfo = {} as UserType,
     isLoading,
+    isError: isUserError,
+    error: userError,
+    isFetching: isUserFetching,
     refetch,
   } = useQuery({
     queryKey: QUERY_KEYS.userInfo(user?.email ?? undefined),
@@ -18,7 +21,11 @@ export const useUserInfo = () => {
     queryFn: async (): Promise<UserType> => {
       const response = await getSingleUser(user!.email!);
       if (response.code === "success") return response.data;
-      throw new Error("Failed to fetch user info");
+      const serverMsg =
+        response.error instanceof Error
+          ? response.error.message
+          : "Failed to fetch user info";
+      throw new Error(serverMsg);
     },
   });
 
@@ -26,6 +33,9 @@ export const useUserInfo = () => {
   const {
     data: allUser = [] as UserType[],
     isLoading: allIsLoading,
+    isError: isAllError,
+    error: allError,
+    isFetching: isAllFetching,
     refetch: refetchAll,
   } = useQuery({
     queryKey: QUERY_KEYS.users(),
@@ -33,9 +43,26 @@ export const useUserInfo = () => {
     queryFn: async (): Promise<UserType[]> => {
       const response = await getAllUsers();
       if (response.code === "success") return response.data;
-      throw new Error("Failed to fetch users");
+      const serverMsg =
+        response.error instanceof Error
+          ? response.error.message
+          : "Failed to fetch users";
+      throw new Error(serverMsg);
     },
   });
 
-  return { userInfo, isLoading, refetch, allUser, allIsLoading, refetchAll };
+  return {
+    userInfo,
+    isLoading,
+    isUserError,
+    userError,
+    isUserFetching,
+    refetch,
+    allUser,
+    allIsLoading,
+    isAllError,
+    allError,
+    isAllFetching,
+    refetchAll,
+  };
 };

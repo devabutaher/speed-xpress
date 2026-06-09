@@ -12,6 +12,10 @@ export const useShop = () => {
   const {
     data: shops = [] as ShopResponseType[],
     isLoading,
+    isError,
+    error,
+    isFetching,
+    dataUpdatedAt,
     refetch,
   } = useQuery({
     queryKey: QUERY_KEYS.shops(user?.email ?? undefined),
@@ -23,9 +27,21 @@ export const useShop = () => {
           : await getAllShop();
 
       if (response.code === "success") return response.data ?? [];
-      throw new Error("Failed to fetch shops");
+      const serverMsg =
+        response.error instanceof Error
+          ? response.error.message
+          : "Failed to fetch shops";
+      throw new Error(serverMsg);
     },
   });
 
-  return { shops, isLoading, refetch };
+  return {
+    shops,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+    dataUpdatedAt,
+    refetch,
+  };
 };

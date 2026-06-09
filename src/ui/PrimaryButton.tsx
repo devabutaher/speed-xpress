@@ -4,7 +4,6 @@ import { ButtonProps } from "@/types/ButtonProps";
 import { Button } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Loading from "./Loading";
 
 /**
  * Primary action button.
@@ -37,7 +36,9 @@ const PrimaryButton = ({
         href={href}
         isDisabled={isDisabled}
         isLoading={isLoading}
-        spinner={<Loading size="sm" />}
+        spinner={
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        }
         size={size}
         radius={radius}
         color={color}

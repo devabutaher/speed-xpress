@@ -8,12 +8,16 @@ import {
 } from "@/data/parcelData";
 import { useAuth } from "@/hooks/useAuth";
 import { useParcel } from "@/hooks/useParcel";
+import {
+  useDeleteParcel,
+  useUpdateParcelStatus,
+} from "@/hooks/useParcelMutations";
 import { useTableControls } from "@/hooks/useTableControls";
 import { ROLES } from "@/lib/constants";
 import { formatCurrency } from "@/lib/utils";
 import { ParcelType, Status } from "@/types/ParcelType";
+import ErrorAlert from "@/ui/ErrorAlert";
 import Loading from "@/ui/Loading";
-import { deleteParcel, updateParcelStatus } from "@/utils/api/parcel";
 import {
   Button,
   Chip,
@@ -34,11 +38,10 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { ChangeEvent, memo, useCallback, useMemo, useState } from "react";
 import { CiSearch as SearchIcon } from "react-icons/ci";
 import { FaChevronDown as ChevronDownIcon } from "react-icons/fa";
 import { HiDotsVertical as VerticalDotsIcon } from "react-icons/hi";
-import { toast } from "react-toastify";
 import ParcelUpdateModal from "./ParcelUpdateModal";
 
 interface ParcelTableProps {
@@ -50,7 +53,9 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  let { parcels, isLoading, refetch } = useParcel();
+  let { parcels, isLoading, isError, error, refetch } = useParcel();
+  const statusMutation = useUpdateParcelStatus();
+  const deleteMutation = useDeleteParcel();
 
   // ── Rider-specific filtering ────────────────────────────────────────────────
   if (role === ROLES.RIDER) {
@@ -136,31 +141,17 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
 
   // ── Action handlers ─────────────────────────────────────────────────────────
   const handleStatusUpdate = useCallback(
-    async (id: string, status: Status) => {
-      const res = await updateParcelStatus({
-        id,
-        data: { parcelStatus: status },
-      });
-      if (res.code === "success") {
-        refetch();
-      } else {
-        toast.error("Failed to update parcel status");
-      }
+    (id: string, status: Status) => {
+      statusMutation.mutate({ id, data: { parcelStatus: status } });
     },
-    [refetch],
+    [statusMutation],
   );
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      const res = await deleteParcel(id);
-      refetch();
-      if (res.code === "success") {
-        toast.success("Parcel deleted successfully");
-      } else {
-        toast.error("Failed to delete parcel");
-      }
+    (id: string) => {
+      deleteMutation.mutate(id);
     },
-    [refetch],
+    [deleteMutation],
   );
 
   const handleView = useCallback(
@@ -555,6 +546,17 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
 
   return (
     <>
+      {isError && (
+        <ErrorAlert
+          message={
+            error instanceof Error
+              ? error.message
+              : "Failed to load parcels. Please try again."
+          }
+          onRetry={() => refetch()}
+        />
+      )}
+
       <Table
         aria-label="Parcels table"
         isHeaderSticky
@@ -599,4 +601,4 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
   );
 };
 
-export default ParcelTable;
+export default memo(ParcelTable);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useParcel } from "@/hooks/useParcel";
+import { useUpdateParcel } from "@/hooks/useParcelMutations";
 import { QUERY_KEYS } from "@/lib/constants";
 import { VALIDATION_PATTERNS } from "@/lib/utils";
 import { ModalFormProps, ParcelFormType } from "@/types/FormTypes";
@@ -11,15 +11,14 @@ import PrimaryButton from "@/ui/PrimaryButton";
 import SecondaryButton from "@/ui/SecondaryButton";
 import SelectDistrict from "@/ui/SelectDistrict";
 import SelectDivision from "@/ui/SelectDivision";
-import { getSingleParcel, updateParcel } from "@/utils/api/parcel";
+import { getSingleParcel } from "@/utils/api/parcel";
 import { Textarea } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 
 const UpdateParcelForm = ({ onClose, id }: ModalFormProps) => {
-  const { refetch } = useParcel();
+  const updateMutation = useUpdateParcel();
 
   const { data: singleParcel = {} as ParcelType, isLoading } =
     useQuery<ParcelType>({
@@ -62,18 +61,13 @@ const UpdateParcelForm = ({ onClose, id }: ModalFormProps) => {
       description,
     };
 
-    const res = await updateParcel({
-      id: singleParcel?._id ?? "",
-      data: parcelData,
-    });
-
-    if (res.code === "success") {
-      refetch();
-      onClose();
-      toast.success("Parcel updated successfully");
-    } else {
-      toast.error("Failed to update parcel. Please try again.");
-    }
+    updateMutation.mutate(
+      {
+        id: singleParcel?._id ?? "",
+        data: parcelData,
+      },
+      { onSuccess: () => onClose() }
+    );
   };
 
   return (
@@ -136,7 +130,7 @@ const UpdateParcelForm = ({ onClose, id }: ModalFormProps) => {
                 message: "Invalid phone",
               },
               minLength: { value: 7, message: "Phone too short" },
-              maxLength: { value: 15, message: "Phone too long" },
+              maxLength: { value: 20, message: "Phone too long" },
             }}
           />
           <div className="flex gap-3">

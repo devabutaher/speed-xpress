@@ -18,22 +18,23 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { ChangeEvent, memo, useCallback, useMemo, useState } from "react";
 
 // icons
 import { useUserInfo } from "@/hooks/useUserInfo";
+import { useDeleteUser } from "@/hooks/useUserMutations";
 import { UserType } from "@/types/UserType";
+import ErrorAlert from "@/ui/ErrorAlert";
 import Loading from "@/ui/Loading";
-import { deleteUserById } from "@/utils/api/user";
 import { usePathname, useRouter } from "next/navigation";
 import { CiSearch as SearchIcon } from "react-icons/ci";
 import { FaChevronDown as ChevronDownIcon } from "react-icons/fa";
 import { HiDotsVertical as VerticalDotsIcon } from "react-icons/hi";
-import { toast } from "react-toastify";
-
 const UserTable = () => {
   // hooks
-  let { allIsLoading, allUser, refetchAll } = useUserInfo();
+  let { allIsLoading, allUser, isAllError, allError, refetchAll } =
+    useUserInfo();
+  const deleteMutation = useDeleteUser();
   const { page, setPage, onNextPage, onPreviousPage, filterValue, onSearchChange, onClearSearch, visibleColumns, setVisibleColumns } = useTableControls(["name", "email", "role", "number", "actions"]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const router = useRouter();
@@ -95,16 +96,8 @@ const UserTable = () => {
         router.push(`/dashboard/admin/users/${id}`);
       };
 
-      const handleDelete = async (id: string) => {
-        const response = await deleteUserById(id);
-
-        if (response.code === "success") {
-          toast.success("User deleted successfully");
-          refetchAll();
-        } else {
-          toast.error("Something went wrong");
-          console.error(response.error);
-        }
+      const handleDelete = (id: string) => {
+        deleteMutation.mutate(id);
       };
 
       switch (columnKey) {
@@ -186,7 +179,7 @@ const UserTable = () => {
           return <>{cellValue}</>;
       }
     },
-    [refetchAll, router]
+    [deleteMutation, router]
   );
 
   const onRowsPerPageChange = useCallback(
@@ -301,8 +294,19 @@ const UserTable = () => {
 
   return (
     <>
+      {isAllError && (
+        <ErrorAlert
+          message={
+            allError instanceof Error
+              ? allError.message
+              : "Failed to load users. Please try again."
+          }
+          onRetry={() => refetchAll()}
+        />
+      )}
+
       <Table
-        aria-label="Example table with custom cells, pagination and sorting"
+        aria-label="Users table"
         isHeaderSticky
         radius="sm"
         bottomContent={bottomContent}
@@ -340,4 +344,4 @@ const UserTable = () => {
   );
 };
 
-export default UserTable;
+export default memo(UserTable);

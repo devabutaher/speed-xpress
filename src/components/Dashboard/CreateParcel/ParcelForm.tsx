@@ -118,6 +118,8 @@ const ParcelForm = ({
       return;
     }
 
+    const parcelId = parcelResponse.data.parcelId ?? "";
+
     const invoiceBase = {
       userEmail: userInfo?.email ?? "",
       userName: userInfo?.name ?? "",
@@ -151,6 +153,7 @@ const ParcelForm = ({
 
       if (updateResponse.code === "success") {
         reset();
+        toast.success("✅ Parcel created! Redirecting to payment...");
         // Redirect to Stripe checkout
         router.push(`${paymentResponse.data.url}`);
       } else {
@@ -164,7 +167,7 @@ const ParcelForm = ({
 
     if (invoiceResponse.code === "success") {
       reset();
-      toast.success("Parcel created successfully!");
+      toast.success("✅ Parcel created! Check your email for tracking details.");
       router.push(`/dashboard/${userInfo?.role}/parcels`);
     } else {
       toast.error("Parcel was created but invoice generation failed.");
@@ -222,7 +225,7 @@ const ParcelForm = ({
             message: t.auth.errors.phoneInvalid,
           },
           minLength: { value: 7, message: t.auth.errors.phoneInvalid },
-          maxLength: { value: 15, message: t.auth.errors.phoneInvalid },
+          maxLength: { value: 20, message: t.auth.errors.phoneInvalid },
         }}
       />
       <div className="flex gap-3">

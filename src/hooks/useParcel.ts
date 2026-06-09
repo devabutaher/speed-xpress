@@ -12,19 +12,36 @@ export const useParcel = () => {
   const {
     data: parcels = [] as ParcelType[],
     isLoading,
+    isError,
+    error,
+    isFetching,
+    dataUpdatedAt,
     refetch,
   } = useQuery({
     queryKey: QUERY_KEYS.parcels(user?.email ?? undefined),
     enabled: !!user?.email && !!role,
+    refetchInterval: 30_000,
     queryFn: async (): Promise<ParcelType[]> => {
       const response = isAdminOrRider
         ? await getAllParcel()
         : await getParcelByEmail(user!.email!);
 
       if (response.code === "success") return response.data ?? [];
-      throw new Error("Failed to fetch parcels");
+      const serverMsg =
+        response.error instanceof Error
+          ? response.error.message
+          : "Failed to fetch parcels";
+      throw new Error(serverMsg);
     },
   });
 
-  return { parcels, isLoading, refetch };
+  return {
+    parcels,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+    dataUpdatedAt,
+    refetch,
+  };
 };

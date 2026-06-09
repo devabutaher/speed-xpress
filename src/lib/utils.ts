@@ -79,7 +79,7 @@ export function getInitials(name: string | null | undefined): string {
 
 export const VALIDATION_PATTERNS = {
   email: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-  phone: /^[0-9+\-\s()]{7,15}$/,
+  phone: /^[0-9+\-\s()]{7,20}$/,
   bdPhone: /^(\+?880|0)?1[3-9]\d{8}$/,
   name: /^[A-Za-z\u0980-\u09FF\s]+$/i,
 } as const;

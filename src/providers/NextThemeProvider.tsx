@@ -10,7 +10,6 @@ const NextThemeProvider = ({ children }: PropsWithChildren) => {
       <ThemeProvider
         attribute="data-theme"
         defaultTheme="dark"
-        enableSystem
         disableTransitionOnChange={false}
       >
         {children}

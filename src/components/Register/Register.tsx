@@ -11,6 +11,7 @@ const ROLE_TABS: { key: Role; label: string }[] = [
   { key: ROLES.REGULAR, label: "Regular" },
   { key: ROLES.MERCHANT, label: "Merchant" },
   { key: ROLES.RIDER, label: "Rider" },
+  { key: ROLES.ADMIN, label: "Admin" },
 ];
 
 const Register = () => {
@@ -50,6 +51,7 @@ const Register = () => {
           {role === ROLES.REGULAR && <RegisterForm role={ROLES.REGULAR} />}
           {role === ROLES.MERCHANT && <RegisterForm role={ROLES.MERCHANT} />}
           {role === ROLES.RIDER && <RegisterForm role={ROLES.RIDER} />}
+          {role === ROLES.ADMIN && <RegisterForm role={ROLES.ADMIN} />}
 
           {/* Login link */}
           <p className="text-center text-sm pt-1">

@@ -8,11 +8,12 @@ import {
 } from "@/data/invoiceData";
 import { useAuth } from "@/hooks/useAuth";
 import { useInvoice } from "@/hooks/useInvoice";
+import { useDeleteInvoice } from "@/hooks/useInvoiceMutations";
 import { useTableControls } from "@/hooks/useTableControls";
 import { formatCurrency } from "@/lib/utils";
 import { InvoiceType } from "@/types/invoiceType";
+import ErrorAlert from "@/ui/ErrorAlert";
 import Loading from "@/ui/Loading";
-import { deleteInvoice } from "@/utils/api/invoice";
 import {
   Button,
   Chip,
@@ -32,14 +33,13 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { ChangeEvent, memo, useCallback, useMemo, useState } from "react";
 import { CiSearch as SearchIcon } from "react-icons/ci";
 import { FaChevronDown as ChevronDownIcon } from "react-icons/fa";
 import { HiDotsVertical as VerticalDotsIcon } from "react-icons/hi";
-import { toast } from "react-toastify";
-
 const InvoiceTable = () => {
-  const { invoices, isLoading, refetch } = useInvoice();
+  const { invoices, isLoading, isError, error, refetch } = useInvoice();
+  const deleteMutation = useDeleteInvoice();
   const { role } = useAuth();
   const router = useRouter();
 
@@ -108,16 +108,10 @@ const InvoiceTable = () => {
   );
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      const res = await deleteInvoice(id);
-      refetch();
-      if (res.code === "success") {
-        toast.success("Invoice deleted");
-      } else {
-        toast.error("Failed to delete invoice");
-      }
+    (id: string) => {
+      deleteMutation.mutate(id);
     },
-    [refetch],
+    [deleteMutation],
   );
 
   const renderCell = useCallback(
@@ -375,40 +369,53 @@ const InvoiceTable = () => {
   );
 
   return (
-    <Table
-      aria-label="Invoices table"
-      isHeaderSticky
-      radius="sm"
-      topContent={topContent}
-      topContentPlacement="outside"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{ wrapper: "max-h-[32rem]" }}
-    >
-      <TableHeader columns={headerColumns}>
-        {(col) => (
-          <TableColumn
-            key={col.uid}
-            align={col.uid === "actions" ? "center" : "start"}
-          >
-            {col.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        items={items}
-        emptyContent={isLoading ? <Loading size="lg" /> : "No invoices found"}
+    <>
+      {isError && (
+        <ErrorAlert
+          message={
+            error instanceof Error
+              ? error.message
+              : "Failed to load invoices. Please try again."
+          }
+          onRetry={() => refetch()}
+        />
+      )}
+
+      <Table
+        aria-label="Invoices table"
+        isHeaderSticky
+        radius="sm"
+        topContent={topContent}
+        topContentPlacement="outside"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{ wrapper: "max-h-[32rem]" }}
       >
-        {(item) => (
-          <TableRow key={item._id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader columns={headerColumns}>
+          {(col) => (
+            <TableColumn
+              key={col.uid}
+              align={col.uid === "actions" ? "center" : "start"}
+            >
+              {col.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          items={items}
+          emptyContent={isLoading ? <Loading size="lg" /> : "No invoices found"}
+        >
+          {(item) => (
+            <TableRow key={item._id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 };
 
-export default InvoiceTable;
+export default memo(InvoiceTable);

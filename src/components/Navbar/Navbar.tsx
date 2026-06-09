@@ -128,7 +128,7 @@ const MainNavbar = () => {
       className="bg-light/90 dark:bg-dark/90 backdrop-blur-md border-gray-200 dark:border-gray-800"
       maxWidth="xl"
     >
-      {/* ── Mobile: toggle + logo ── */}
+      {/* ── Mobile: toggle + logo (left) ── */}
       <NavbarContent className="sm:hidden">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -137,13 +137,49 @@ const MainNavbar = () => {
         <Logo />
       </NavbarContent>
 
-      {/* ── Desktop: logo (left) ── */}
-      <NavbarContent className="hidden sm:flex">
-        <Logo />
+      {/* ── Mobile: action buttons (right) ── */}
+      <NavbarContent className="sm:hidden" justify="end">
+        {!loading && !user && (
+          <>
+            <NavbarItem>
+              <SecondaryButton
+                href="/login"
+                size="sm"
+                className="text-xs px-2.5 min-w-fit h-8"
+              >
+                {t.nav.login}
+              </SecondaryButton>
+            </NavbarItem>
+            <NavbarItem>
+              <PrimaryButton
+                href="/create-parcel"
+                size="sm"
+                className="text-xs px-2.5 min-w-fit h-8"
+              >
+                📦 Parcel
+              </PrimaryButton>
+            </NavbarItem>
+          </>
+        )}
+        {!loading && user && (
+          <NavbarItem>
+            <PrimaryButton
+              onClick={handleDashboardClick}
+              size="sm"
+              className="text-xs px-2.5 min-w-fit h-8"
+            >
+              {t.nav.dashboard}
+            </PrimaryButton>
+          </NavbarItem>
+        )}
+        {loading && (
+          <Skeleton className="rounded-md w-12 h-8" />
+        )}
       </NavbarContent>
 
-      {/* ── Desktop: nav links (center) ── */}
-      <NavbarContent className="hidden sm:flex gap-8" justify="center">
+      {/* ── Desktop: logo + nav links (left) ── */}
+      <NavbarContent className="hidden sm:flex gap-4 lg:gap-8">
+        <Logo />
         {mainNavbarData.map((item) => (
           <NavbarItem key={item.link} isActive={isActive(item.link)}>
             <DesktopNavLink
@@ -203,12 +239,17 @@ const MainNavbar = () => {
               exit={{ opacity: 0 }}
               className="flex items-center gap-2"
             >
+              <NavbarItem>
+                <PrimaryButton href="/create-parcel" size="sm">
+                  📦 Create Parcel
+                </PrimaryButton>
+              </NavbarItem>
               <NavbarItem className="hidden lg:flex">
                 <SecondaryButton href="/login" size="sm">
                   {t.nav.login}
                 </SecondaryButton>
               </NavbarItem>
-              <NavbarItem>
+              <NavbarItem className="hidden lg:flex">
                 <PrimaryButton href="/register" size="sm">
                   {t.nav.register}
                 </PrimaryButton>
@@ -234,6 +275,11 @@ const MainNavbar = () => {
         {/* Auth links in mobile menu — conditional on auth state */}
         {!loading && !user && (
           <>
+            <MobileNavLink
+              href="/create-parcel"
+              label="📦 Create Parcel"
+              onClick={closeMenu}
+            />
             <MobileNavLink
               href="/login"
               label={t.nav.login}

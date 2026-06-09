@@ -29,11 +29,11 @@ const OrderPlace = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:justify-start justify-center">
-            <PrimaryButton href="/login" size="md">
-              {content.getStarted}
+            <PrimaryButton href="/create-parcel" size="md">
+              📦 Create Parcel (Demo)
             </PrimaryButton>
-            <SecondaryButton href="/register" size="md">
-              {content.orderNow}
+            <SecondaryButton href="/login" size="md">
+              {content.getStarted}
             </SecondaryButton>
           </div>
         </motion.div>

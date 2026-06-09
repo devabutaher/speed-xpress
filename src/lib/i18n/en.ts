@@ -204,6 +204,27 @@ export const en = {
     updatedAt: "Updated At",
   },
 
+  guest: {
+    banner: "This is a demo / guest experience. No login required! Try creating a parcel right now and see how Speed Xpress works. Want the full experience?",
+    login: "Login",
+    signUp: "Sign Up",
+    createParcel: "Create Parcel (Demo)",
+    createParcelTitle: "CREATE PARCEL",
+    guestMode: "Guest Mode",
+    senderDetails: "Sender Details",
+    recipientDetails: "Recipient Details",
+    parcelDetails: "Parcel Details",
+    senderName: "Sender Name",
+    parcelCreated: "Parcel Created Successfully!",
+    parcelCreatedDesc: "Your parcel has been created and we've sent a confirmation email. Check your mail for tracking details.",
+    trackParcel: "Track your parcel →",
+    createAnother: "Create Another Parcel",
+    tryNow: "Try Now",
+    noLoginRequired: "No Login Required",
+    createParcelNav: "📦 Create Parcel",
+    ctaDescription: "Send, receive, and track parcels instantly — no account needed.",
+  },
+
   home: {
     hero: {
       badge: "Welcome to Speed Xpress",

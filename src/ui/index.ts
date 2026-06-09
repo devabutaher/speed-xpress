@@ -14,5 +14,6 @@ export { default as SelectDivision } from "./SelectDivision";
 export { default as SelectShop } from "./SelectShop";
 export { default as SelectVehicles } from "./SelectVehicles";
 export { default as ThemeSwitch } from "./ThemeSwitch";
+export { default as ErrorAlert } from "./ErrorAlert";
 export { default as TrackingModal } from "./TrackingModal";
 export { default as TrackParcel } from "./TrackParcel";

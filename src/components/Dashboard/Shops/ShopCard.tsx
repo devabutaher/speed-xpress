@@ -1,28 +1,22 @@
 "use client";
 
 import { useShop } from "@/hooks/useShop";
+import { useDeleteShop } from "@/hooks/useShopMutations";
+import ErrorAlert from "@/ui/ErrorAlert";
 import Loading from "@/ui/Loading";
 import SecondaryButton from "@/ui/SecondaryButton";
-import { deleteShop } from "@/utils/api/shop";
 import Image from "next/image";
 import { FiTrash } from "react-icons/fi";
 import { toast } from "react-toastify";
 import UpdateShopModal from "./UpdateShopModal";
 
 const ShopCard = () => {
-  const { shops, isLoading, refetch } = useShop();
+  const { shops, isLoading, isError, error, refetch } = useShop();
+  const deleteMutation = useDeleteShop();
 
-  const handleDeleteShop = async (id: string) => {
+  const handleDeleteShop = (id: string) => {
     if (shops.length !== 1) {
-      const response = await deleteShop(id);
-
-      if (response.code === "success") {
-        refetch();
-        toast.success("Shop deleted successfully");
-      } else {
-        toast.error("Something went wrong");
-        console.error(response.error);
-      }
+      deleteMutation.mutate(id);
     } else {
       toast.warning("You have only one shop");
     }
@@ -30,6 +24,19 @@ const ShopCard = () => {
 
   return (
     <>
+      {isError && (
+        <div className="mb-4">
+          <ErrorAlert
+            message={
+              error instanceof Error
+                ? error.message
+                : "Failed to load shops. Please try again."
+            }
+            onRetry={() => refetch()}
+          />
+        </div>
+      )}
+
       {isLoading ? (
         <div className="grid place-items-center h-[40rem]">
           <Loading size="lg" />

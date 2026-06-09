@@ -3,6 +3,7 @@ import NextThemeProvider from "@/providers/NextThemeProvider";
 import { ChildrenProps } from "@/types/ChildrenProps";
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Bengali } from "next/font/google";
+// @ts-ignore: side-effect import of global CSS
 import "./globals.css";
 
 const inter = Inter({

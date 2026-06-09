@@ -32,8 +32,8 @@ const GetStarted = () => {
           <p className="text-gray-500 dark:text-gray-400">
             {t.home.getStarted.subtitle}
           </p>
-          <PrimaryButton href="/register" size="lg">
-            {t.home.getStarted.cta} →
+          <PrimaryButton href="/create-parcel" size="lg">
+            📦 {t.home.getStarted.cta} →
           </PrimaryButton>
         </motion.div>
 

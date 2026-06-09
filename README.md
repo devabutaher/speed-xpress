@@ -1,123 +1,191 @@
 
-# Speed Xpress: Parcel Management System
+<div align="center">
+  <h1>🚀 Speed Xpress — Frontend</h1>
+  <p><strong>Swift · Secure · Seamless</strong></p>
+  <p>A full-featured courier & parcel management platform.<br>Built with <strong>Next.js 14</strong> + <strong>TypeScript</strong> + <strong>Firebase Auth</strong> + <strong>Stripe</strong>.</p>
 
+  <p>
+    <a href="https://speedxpress.vercel.app" target="_blank">🌐 Live Demo</a>
+    ·
+    <a href="#features">✨ Features</a>
+    ·
+    <a href="#tech-stack">🛠️ Stack</a>
+    ·
+    <a href="#structure">📁 Structure</a>
+    ·
+    <a href="#setup">🚀 Setup</a>
+  </p>
 
-Effortlessly manage parcels with Speed Xpress. Send, receive, and track with ease. Tailored dashboards for customers, merchants, and admins. Swift local delivery and real-time updates. Your shortcut to efficient parcel management.
+  <p>
+    <img src="https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js" alt="Next.js 14" />
+    <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind-3-06B6D4?style=flat-square&logo=tailwindcss" alt="Tailwind" />
+    <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase" alt="Firebase" />
+    <img src="https://img.shields.io/badge/Stripe-008CDD?style=flat-square&logo=stripe" alt="Stripe" />
+    <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb" alt="MongoDB" />
+  </p>
+</div>
 
-![App Screenshot](https://res.cloudinary.com/df7zqzc8x/image/upload/v1709920322/speed-xpress-screenshot_tymwvf.png)
+![App Screenshot](./public/assets/images/homepage.png)
 
+---
 
-## Live Preview
+## 📋 Overview
 
-#### [Speed Xpress](https://speed-xpress-v2.vercel.app)
+Speed Xpress is a **production-grade courier management system** with **4 role-based dashboards** — Admin, Merchant, Rider, and Regular Customer. It supports guest parcel creation (no login), real-time tracking, Stripe payments, bilingual i18n (English + Bengali), and analytics with Chart.js.
 
+> Perfect for last-mile delivery, e-commerce logistics, and courier companies.
 
-## Tech Stack
+---
 
-**Client:** React.js, Next.js, TypeScript, TailwindCSS, NextUI
+## ✨ Features
 
-**Server:** Node.js, Express.js, MongoDB
+### 🌐 Public (No Login)
 
+| Feature | Description |
+|---|---|
+| **Landing Page** | Animated hero, pricing calculator, partner logos (Daraz, Pathao, RedX, Paperfly, Ajkerdeal), FAQ, testimonials |
+| **Pricing Calculator** | Select weight/zone/shipping → real-time cost breakdown |
+| **Guest Parcel** | Create a parcel without signing up |
+| **Parcel Tracking** | Track by ID with visual status timeline & PDF download |
+| **Blog** | Logistics & shipping articles |
+| **i18n** | Full **English** + **Bengali (বাংলা)** |
 
-## Features
+### 🔐 Role Dashboards
 
-- User-Friendly Dashboards
-- Parcel Creation and Tracking
-- Merchant Inventory Management
-- Order Fulfillment
-- Admin Oversight
-- Rider Account for Local Delivery
-- Efficient User Management
-- Scalability
+| Role | Key Capabilities |
+|---|---|
+| **👤 Regular** | Create/track parcels, invoices, Stripe/COD payments, profile |
+| **🏪 Merchant** | All regular features + **shop management** (multiple shops) |
+| **🏍️ Rider** | View deliveries, update status, earnings tracking |
+| **⚙️ Admin** | Full control — users, merchants, riders, all parcels & invoices |
 
+### 📊 Analytics (Per Role)
+Parcel stats, invoice stats, Chart.js line chart (parcels over time), pie chart (status distribution).
 
-## Authors
+### 💳 Payments
+Stripe Checkout, Cash on Delivery, invoice PDF download via react-to-print.
 
-- [@Tofayel](https://www.github.com/Tofayel-stack)
-- [@Abu Taher](https://www.github.com/writerabutaher)
-- [@Ashikur Rahman](https://www.github.com/ashikur540)
-- [@Anas Mahmud](https://www.github.com/anas-mahmud)
+### 🎨 UI/UX
+Dark mode by default (next-themes), Framer Motion animations, fully responsive (mobile-first), NextUI v2, react-toastify notifications.
 
+---
 
-## Run Locally
+## 🛠️ Tech Stack
 
-Clone the project
+| Category | Technology |
+|---|---|
+| **Framework** | Next.js 14 (App Router) |
+| **Language** | TypeScript 5 |
+| **Styling** | Tailwind CSS 3.4 + NextUI v2.2 |
+| **Animation** | Framer Motion 10 |
+| **Auth** | Firebase Auth (Email + Google) |
+| **Payments** | Stripe Checkout Sessions |
+| **HTTP** | Axios (401 auto-logout interceptor) |
+| **Server State** | TanStack React Query 5 |
+| **Forms** | react-hook-form |
+| **Charts** | Chart.js 4 + react-chartjs-2 |
+| **Theme** | next-themes (data-theme) |
+| **i18n** | Custom EN / BN dictionaries |
+| **Carousel** | Embla Carousel |
+| **PDF** | react-to-print |
+| **JWT** | jose (httpOnly cookie) |
 
-```bash
-  git clone https://github.com/Team-Code-Artisans/speed-xpress-v2.git
+---
+
+## 📁 Structure
+
+```
+src/
+├── app/
+│   ├── (primary)/           # Public routes
+│   │   ├── page.tsx         # Home
+│   │   ├── (auth)/          # Login, Register, Password
+│   │   ├── parcels/[id]/    # Tracking
+│   │   ├── create-parcel/   # Guest
+│   │   └── ...              # About, Blog, Contact, Features
+│   └── dashboard/
+│       ├── admin/     (12 pages)
+│       ├── merchant/  (8 pages)
+│       ├── regular/   (7 pages)
+│       └── rider/     (7 pages)
+├── components/        # Home, Dashboard, Login, Register, GuestParcel
+├── hooks/             # 15+ custom hooks (React Query, auth, table controls)
+├── lib/i18n/          # en.ts + bn.ts
+├── providers/         # Auth, Theme, Query, AllState
+├── types/             # 16+ type definitions
+├── ui/                # CustomInput, SelectDivision, etc.
+├── utils/api/         # API clients (parcel, invoice, user, shop, payment)
+├── config/            # Firebase init
+└── data/              # Divisions, districts, blog, reviews, navbar
 ```
 
-Go to the project directory
+---
+
+## 🚀 Setup
 
 ```bash
-  cd speed-xpress-v2
+git clone https://github.com/devabutaher/speed-xpress
+cd speed-xpress
+npm install
+npm run dev     # → http://localhost:3000
 ```
 
-Install dependencies
+### Environment Variables
 
-```bash
-  npm install
-```
-```bash
-  yarn
-```
-
-Start the server
-
-```bash
-  npm run dev
-```
-```bash
-  yarn dev
+```env
+NEXT_PUBLIC_FIREBASE_apiKey=...
+NEXT_PUBLIC_FIREBASE_authDomain=...
+NEXT_PUBLIC_FIREBASE_projectId=...
+NEXT_PUBLIC_FIREBASE_storageBucket=...
+NEXT_PUBLIC_FIREBASE_messagingSenderId=...
+NEXT_PUBLIC_FIREBASE_appId=...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_JWT_SECRET=...
+NEXT_PUBLIC_SERVER_URL=http://localhost:5001/api
+NEXT_PUBLIC_CLIENT_URL=http://localhost:3000
 ```
 
+---
 
-## Environment Variables
+## 🔌 API Endpoints
 
-To run this project, you will need to add the following environment variables to your .env file
+All calls → `NEXT_PUBLIC_SERVER_URL`. Response format: `{ code, data, message }`.
 
-`NEXT_PUBLIC_FIREBASE_apiKey`
+| Module | Base | Key Endpoints |
+|---|---|---|
+| **Parcels** | `/parcels` | `GET all-parcel`, `GET ?email=`, `GET /:id`, `POST create-parcel`, `PUT update/:id`, `PUT update-status/:id`, `DELETE /:id` |
+| **Users** | `/users` | `GET all-users`, `GET ?email=`, `GET /:id`, `POST create-user`, `PUT update-user/:id`, `DELETE /:id` |
+| **Shops** | `/shops` | `GET all-shop`, `GET ?email=`, `GET /:id`, `POST create-shop`, `PUT update-shop/:id`, `DELETE /:id` |
+| **Payment** | `/payment` | `POST /` (Stripe), `POST create-invoice`, `GET all-invoices`, `GET invoice/?email=`, `GET invoice/:id`, `PUT update-status/:id`, `DELETE /:id` |
 
-`NEXT_PUBLIC_FIREBASE_authDomain`
+---
 
-`NEXT_PUBLIC_FIREBASE_projectId`
+## 🧪 Demo
 
-`NEXT_PUBLIC_FIREBASE_storageBucket`
+- **Guest parcel** — Create from homepage (no login)
+- **Track parcel** — Use ID `SXE8B97B` on the tracking widget
+- **Full dashboard** — Register at `/register` (pick any role)
 
-`NEXT_PUBLIC_FIREBASE_messagingSenderId`
+---
 
-`NEXT_PUBLIC_FIREBASE_appId`
+## 👨‍💻 Authors
 
-`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+| Name | GitHub |
+|---|---|
+| **Abu Taher** | [@devabutaher](https://github.com/devabutaher) |
+| **Tofayel** | [@Tofayel-stack](https://github.com/Tofayel-stack) |
+| **Ashikur Rahman** | [@ashikur540](https://github.com/ashikur540) |
+| **Anas Mahmud** | [@anas-mahmud](https://github.com/anas-mahmud) |
 
-`NEXT_PUBLIC_JWT_SECRET`
+---
 
+## 📬 Feedback
 
-## Color Reference
+**code.abutaher@gmail.com**
 
-| Color             | Hex                |
-| ----------------- |------------------- |
-| primary           | #0a192f            |
-| secondary         | #93c5fd            |
-| light             | #f3f4f6            |
-| dark              | #030712            |
+---
 
-
-## Documentation
-
-[Documentation](https://docs.google.com/document/d/1QVaNc4gVsEAPvAsBPO9Rjr3sb31Y1o0-RIxc3xMgFIo/edit?usp=sharing)
-
-
-## Feedback
-
-If you have any feedback, please reach out to us at code.abutaher@gmail.com
-
-
-## Support
-
-For support, email code.abutaher@gmail.com or join our Slack channel.
-
-
-## License
+## 📜 License
 
 [MIT](https://choosealicense.com/licenses/mit/)

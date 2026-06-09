@@ -1,19 +1,40 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import InvoiceStats from "@/components/Dashboard/Home/InvoiceStats";
-import LineChart from "@/components/Dashboard/Home/LineChart";
 import ParcelStats from "@/components/Dashboard/Home/ParcelStats";
-import PieChart from "@/components/Dashboard/Home/PieChart";
 import { useAuth } from "@/hooks/useAuth";
 import { useParcel } from "@/hooks/useParcel";
 import { useTranslation } from "@/lib/i18n";
 import { staggerContainer, staggerItem } from "@/lib/motion";
+import ErrorAlert from "@/ui/ErrorAlert";
 import { motion } from "framer-motion";
+
+// Dynamic imports for chart.js (heavy ~60KB) — loaded only when dashboard mounts
+const LineChart = dynamic(
+  () => import("@/components/Dashboard/Home/LineChart"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="skeleton h-64 rounded-xl" />
+    ),
+  }
+);
+
+const PieChart = dynamic(
+  () => import("@/components/Dashboard/Home/PieChart"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="skeleton h-64 w-64 rounded-xl" />
+    ),
+  }
+);
 
 const DashboardPage = () => {
   const t = useTranslation();
   const { user } = useAuth();
-  const { parcels, isLoading } = useParcel();
+  const { parcels, isLoading, isError, error, refetch } = useParcel();
 
   if (isLoading) {
     return (
@@ -41,6 +62,20 @@ const DashboardPage = () => {
       animate="visible"
       className="container-xl py-10 lg:py-16 space-y-12"
     >
+      {/* Error state */}
+      {isError && (
+        <motion.div variants={staggerItem}>
+          <ErrorAlert
+            message={
+              error instanceof Error
+                ? error.message
+                : "Failed to load dashboard data"
+            }
+            onRetry={() => refetch()}
+          />
+        </motion.div>
+      )}
+
       {/* Welcome banner */}
       <motion.div variants={staggerItem}>
         <h1 className="text-2xl lg:text-3xl font-bold">

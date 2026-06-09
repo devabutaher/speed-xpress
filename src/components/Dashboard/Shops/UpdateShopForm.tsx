@@ -1,3 +1,4 @@
+import { useUpdateShop } from "@/hooks/useShopMutations";
 import {
   ShopFormType,
   ShopModalPropsType,
@@ -7,19 +8,18 @@ import CustomInput from "@/ui/CustomInput";
 import PrimaryButton from "@/ui/PrimaryButton";
 import SelectDistrict from "@/ui/SelectDistrict";
 import SelectDivision from "@/ui/SelectDivision";
-import { updateShop } from "@/utils/api/shop";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 
-const UpdateShopForm = ({ onClose, id, refetch, shop }: ShopModalPropsType) => {
+const UpdateShopForm = ({ onClose, id, shop }: ShopModalPropsType) => {
+  const updateMutation = useUpdateShop();
+
   const [division, setDivision] = useState<string>(
     `${shop.address.division || ""}`
   );
   const [district, setDistrict] = useState<string>(
     `${shop.address.district || ""}`
   );
-  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -30,8 +30,6 @@ const UpdateShopForm = ({ onClose, id, refetch, shop }: ShopModalPropsType) => {
 
   const handleForm = async (data: ShopFormType) => {
     const { name, email, number, address } = data;
-
-    setLoading(true);
 
     const shopData: UpdateShopType = {
       name,
@@ -44,20 +42,15 @@ const UpdateShopForm = ({ onClose, id, refetch, shop }: ShopModalPropsType) => {
       },
     };
 
-    // Shop response
-    const shopResponse = await updateShop({ id, data: shopData });
-
-    if (shopResponse.code === "success") {
-      reset();
-      refetch();
-      onClose();
-      setLoading(false);
-      toast.success("Shop created successfully");
-    } else {
-      setLoading(false);
-      toast.error("Shop created failed");
-      console.error(shopResponse.error);
-    }
+    updateMutation.mutate(
+      { id, data: shopData },
+      {
+        onSuccess: () => {
+          reset();
+          onClose();
+        },
+      }
+    );
   };
 
   return (
@@ -102,11 +95,11 @@ const UpdateShopForm = ({ onClose, id, refetch, shop }: ShopModalPropsType) => {
         validationRules={{
           required: "*phone number is required",
           pattern: {
-            value: /^[0-9+\\-]+$/,
+            value: /^[0-9+\-\s()]{7,20}$/,
             message: "invalid phone number",
           },
           minLength: { value: 7, message: "*invalid phone number" },
-          maxLength: { value: 15, message: "*invalid phone number" },
+          maxLength: { value: 20, message: "*invalid phone number" },
         }}
       />
       <div className="flex gap-4">
@@ -134,8 +127,8 @@ const UpdateShopForm = ({ onClose, id, refetch, shop }: ShopModalPropsType) => {
       <PrimaryButton
         type="submit"
         fullWidth={true}
-        isDisabled={loading}
-        isLoading={loading}
+        isDisabled={updateMutation.isPending}
+        isLoading={updateMutation.isPending}
       >
         Update Shop
       </PrimaryButton>

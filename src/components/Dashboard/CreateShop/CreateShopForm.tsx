@@ -105,11 +105,11 @@ const CreateShopForm = ({ onClose }: OnCloseProps) => {
         validationRules={{
           required: "*phone number is required",
           pattern: {
-            value: /^[0-9+\\-]+$/,
+            value: /^[0-9+\-\s()]{7,20}$/,
             message: "invalid phone number",
           },
           minLength: { value: 7, message: "*invalid phone number" },
-          maxLength: { value: 15, message: "*invalid phone number" },
+          maxLength: { value: 20, message: "*invalid phone number" },
         }}
       />
       <div className="flex gap-4">

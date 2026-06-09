@@ -10,6 +10,10 @@ type SuccessResponse<V> = {
 type ErrorResponse<E = AxiosError> = {
   code: "error";
   error: E;
+  /** Server-returned error message, extracted from response body if available */
+  message?: string;
+  /** HTTP status code, extracted from response if available */
+  status?: number;
 };
 
 type BaseResponse<V, E> =
@@ -23,6 +27,24 @@ export const requestHandler =
       const response = await request(params);
       return { code: "success", data: response.data };
     } catch (error) {
-      return { code: "error", error: error as E };
+      const axiosError = error as AxiosError<{
+        message?: string;
+        error?: string;
+        err?: string;
+      }>;
+
+      // Extract the most meaningful server error message
+      const serverMessage =
+        axiosError.response?.data?.message ??
+        axiosError.response?.data?.error ??
+        axiosError.response?.data?.err ??
+        axiosError.message;
+
+      return {
+        code: "error",
+        error: error as E,
+        message: serverMessage,
+        status: axiosError.response?.status,
+      };
     }
   };
