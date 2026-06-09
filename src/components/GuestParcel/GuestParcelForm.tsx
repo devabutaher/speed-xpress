@@ -448,7 +448,8 @@ const GuestParcelForm = ({
             </span>
           </p>
           <p className="text-xs text-gray-500">
-            We've sent you a confirmation email. Check your mail for details.
+            We&apos;ve sent you a confirmation email. Check your mail for
+            details.
           </p>
           <Link
             href={`/parcels/${createdParcelId}`}
@@ -469,11 +470,7 @@ const GuestParcelForm = ({
           >
             Cancel
           </SecondaryButton>
-          <PrimaryButton
-            type="submit"
-            fullWidth
-            isLoading={isSubmitting}
-          >
+          <PrimaryButton type="submit" fullWidth isLoading={isSubmitting}>
             Create Parcel
           </PrimaryButton>
         </div>
