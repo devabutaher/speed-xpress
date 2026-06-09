@@ -89,7 +89,7 @@ const PricingCalculator = () => {
           className="md:order-last flex items-center justify-center"
         >
           <Image
-            src="/assets/images/pricing_plans.png"
+            src="./assets/images/pricing_plans.png"
             width={600}
             height={600}
             alt="Speed Xpress pricing plans"
@@ -105,6 +105,7 @@ const PricingCalculator = () => {
               <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Weight
               </label>
+
               <Select
                 disallowEmptySelection
                 defaultSelectedKeys={["1"]}
@@ -163,10 +164,7 @@ const PricingCalculator = () => {
                   >
                     Standard
                   </CustomRadio>
-                  <CustomRadio
-                    description="Next business day"
-                    value="express"
-                  >
+                  <CustomRadio description="Next business day" value="express">
                     Express
                   </CustomRadio>
                 </div>
@@ -209,7 +207,8 @@ const PricingCalculator = () => {
 
             <div className="mt-5 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-center">
               <span className="text-xs text-gray-600 dark:text-gray-400">
-                🚚 Flat shipping rate — no surprises! Want to create a parcel?{" "}
+                🚚 Flat shipping rate — no surprises! Want to create a
+                parcel?{" "}
               </span>
               <a
                 href="/create-parcel"
