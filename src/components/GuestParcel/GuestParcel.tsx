@@ -121,24 +121,15 @@ const GuestParcel = () => {
           <Card radius="sm">
             <CardBody className="bg-primary-50 dark:bg-primary-900/20">
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                🚀 This is a{" "}
-                <strong>demo / guest experience</strong>. No login required! Try
-                creating a parcel right now and see how Speed Xpress works. Want
-                the full experience?{" "}
+                🚀 Demo Experience! <b>No login required</b>. Try creating a
+                parcel right now to see how <b>Speed Xpress</b> works, or{" "}
                 <Link
                   href="/login"
                   className="text-primary font-semibold hover:underline"
                 >
                   Login
                 </Link>{" "}
-                or{" "}
-                <Link
-                  href="/register"
-                  className="text-primary font-semibold hover:underline"
-                >
-                  Sign Up
-                </Link>{" "}
-                for personalized features.
+                for the full experience.
               </p>
             </CardBody>
           </Card>

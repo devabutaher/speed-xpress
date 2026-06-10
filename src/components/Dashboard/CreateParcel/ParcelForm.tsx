@@ -167,7 +167,7 @@ const ParcelForm = ({
 
     if (invoiceResponse.code === "success") {
       reset();
-      toast.success("✅ Parcel created! Check your email for tracking details.");
+      toast.success("✅ Parcel created! Check your email.");
       router.push(`/dashboard/${userInfo?.role}/parcels`);
     } else {
       toast.error("Parcel was created but invoice generation failed.");

@@ -174,9 +174,7 @@ const GuestParcelForm = ({
 
     if (invoiceResponse.code === "success") {
       reset();
-      toast.success(
-        `✅ Parcel created! ID: ${parcelId}. Check your email for tracking details.`,
-      );
+      toast.success(`✅ Parcel created! ID: ${parcelId}. Check your email.`);
     } else {
       toast.warn(
         `Parcel created (ID: ${parcelId}) but invoice generation failed.`,
