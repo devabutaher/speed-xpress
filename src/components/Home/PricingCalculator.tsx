@@ -89,7 +89,7 @@ const PricingCalculator = () => {
           className="md:order-last flex items-center justify-center"
         >
           <Image
-            src="./assets/images/pricing_plans.png"
+            src="/assets/images/pricing_plans.png"
             width={600}
             height={600}
             alt="Speed Xpress pricing plans"

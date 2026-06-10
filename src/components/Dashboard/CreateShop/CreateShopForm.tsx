@@ -59,7 +59,6 @@ const CreateShopForm = ({ onClose }: OnCloseProps) => {
     } else {
       setLoading(false);
       toast.error("Shop created failed");
-      console.error(shopResponse.error);
     }
   };
 

@@ -85,7 +85,7 @@ const Accordion = ({ items }: { items: FAQItem[] }) => {
     <div className="space-y-3">
       {items.map((item, i) => (
         <AccordionItem
-          key={i}
+          key={`faq-${i}`}
           item={item}
           index={i}
           isOpen={openIndex === i}

@@ -95,14 +95,14 @@ const RegisterForm = ({ role }: { role: Role }) => {
             reset();
             setTimeout(() => router.push(getDashboardPath(result.role)), 300);
           } else {
-            console.error(shopResponse.error);
+
           }
         } else {
           reset();
           setTimeout(() => router.push(getDashboardPath(result.role)), 300);
         }
       } else {
-        console.error(userResponse.error);
+
       }
     }
   };

@@ -2,6 +2,7 @@
 
 import { ButtonProps } from "@/types/ButtonProps";
 import { Button } from "@nextui-org/react";
+import type { ButtonProps as NextUIButtonProps } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -43,7 +44,7 @@ const PrimaryButton = ({
         radius={radius}
         color={color}
         variant={variant}
-        onClick={onClick as any}
+        onClick={onClick as unknown as NextUIButtonProps["onClick"]}
         type={type}
         fullWidth={fullWidth}
         className={[

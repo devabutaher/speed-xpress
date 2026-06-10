@@ -160,7 +160,6 @@ const DashboardNavbar = () => {
               <DropdownItem
                 key="email"
                 className="h-14 gap-2 cursor-default"
-                textValue={user?.email ?? ""}
                 isReadOnly
               >
                 <p className="text-xs text-gray-500">Signed in as</p>
@@ -186,7 +185,7 @@ const DashboardNavbar = () => {
                       ? `/dashboard/admin${item.link}`
                       : `/dashboard/${role}${item.link}`
                   }
-                  textValue={item.name}
+
                 >
                   {item.name}
                 </DropdownItem>
@@ -200,7 +199,7 @@ const DashboardNavbar = () => {
                 onClick={logOut}
                 className="text-danger"
                 color="danger"
-                textValue="Sign out"
+
               >
                 Sign Out
               </DropdownItem>

@@ -195,27 +195,24 @@ const InvoiceTable = () => {
                 <DropdownMenu aria-label="Invoice actions">
                   <DropdownItem
                     key="view"
-                    textValue="View"
                     onClick={() => handleView(invoice.invoiceId ?? invoice._id ?? "")}
                   >
                     View
                   </DropdownItem>
                   {role === "admin" ? (
-                    <DropdownItem
-                      key="delete"
-                      textValue="Delete"
-                      color="danger"
+                      <DropdownItem
+                        key="delete"
+                        color="danger"
                       className="text-danger"
                       onClick={() => handleDelete(invoice._id ?? "")}
                     >
                       Delete
                     </DropdownItem>
                   ) : (
-                    <DropdownItem
-                      key="delete-hidden"
-                      className="hidden"
-                      textValue="-"
-                    />
+                      <DropdownItem
+                        key="delete-hidden"
+                        className="hidden"
+                      />
                   )}
                 </DropdownMenu>
               </Dropdown>

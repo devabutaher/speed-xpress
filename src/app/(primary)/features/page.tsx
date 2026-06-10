@@ -183,6 +183,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more about Route Planning"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -231,6 +232,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -280,6 +282,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -327,6 +330,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -375,6 +379,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -423,6 +428,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -477,6 +483,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -526,6 +533,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg
@@ -575,6 +583,7 @@ const Features = () => {
 
           <a
             href="#"
+            aria-label="Learn more"
             className="inline-flex p-2 text-blue-500 capitalize transition-colors duration-300 transform bg-blue-100 rounded-full rtl:-scale-x-100 dark:bg-blue-500 dark:text-white hover:underline hover:text-blue-600 dark:hover:text-blue-500"
           >
             <svg

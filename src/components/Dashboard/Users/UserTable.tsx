@@ -157,14 +157,12 @@ const UserTable = () => {
                 <DropdownMenu aria-label="action-items">
                   <DropdownItem key="view"
                     className="text-left"
-                    textValue="view"
                     as="button"
                     onClick={() => handleView(`${user?._id}`)}
                   >
                     View
                   </DropdownItem>
                   <DropdownItem key="delete"
-                    textValue="delete"
                     className="text-left"
                     as="button"
                     onClick={() => handleDelete(`${user?._id}`)}

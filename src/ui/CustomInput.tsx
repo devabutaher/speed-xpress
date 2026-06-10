@@ -1,5 +1,5 @@
 import { Input } from "@nextui-org/react";
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldPath, FieldValues, UseFormRegister } from "react-hook-form";
 
 interface CustomInputProps<T extends FieldValues> {
   label: React.ReactNode;
@@ -32,7 +32,7 @@ function CustomInput<T extends FieldValues>({
 
   return (
     <Input
-      {...register(name as any, validationRules)}
+      {...register(name as FieldPath<T>, validationRules)}
       label={
         <span className="flex items-center gap-0.5">
           {label}

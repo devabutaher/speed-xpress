@@ -1,5 +1,5 @@
 import { QUERY_KEYS } from "@/lib/constants";
-import { ParcelType, Status } from "@/types/ParcelType";
+import { ParcelType, Status, UpdateParcelType } from "@/types/ParcelType";
 import { deleteParcel, updateParcel, updateParcelStatus } from "@/utils/api/parcel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -63,7 +63,7 @@ export const useUpdateParcel = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { id: string; data: any }) => updateParcel(params),
+    mutationFn: (params: UpdateParcelType) => updateParcel(params),
 
     onSuccess: () => {
       toast.success("Parcel updated successfully");

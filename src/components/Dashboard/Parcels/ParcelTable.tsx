@@ -279,7 +279,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {/* View */}
                   <DropdownItem
                     key="view"
-                    textValue="View"
+                    
                     onClick={() => handleView(parcelId)}
                   >
                     View
@@ -289,7 +289,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {role !== ROLES.RIDER ? (
                     <DropdownItem
                       key="edit"
-                      textValue="Edit"
+                      
                       onClick={() => {
                         setUpdateId(parcelId);
                         onOpen();
@@ -301,7 +301,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                     <DropdownItem
                       key="edit-hidden"
                       className="hidden"
-                      textValue="-"
+                      
                     />
                   )}
 
@@ -309,7 +309,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {role === ROLES.ADMIN && status !== Status.Accepted ? (
                     <DropdownItem
                       key="accept-admin"
-                      textValue="Accept"
+                      
                       onClick={() => handleStatusUpdate(id, Status.Accepted)}
                     >
                       Accept
@@ -318,7 +318,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                     <DropdownItem
                       key="accept-admin-hidden"
                       className="hidden"
-                      textValue="-"
+                      
                     />
                   )}
 
@@ -326,7 +326,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {role === ROLES.RIDER && status === Status.Accepted ? (
                     <DropdownItem
                       key="picked"
-                      textValue="Mark Picked"
+                      
                       onClick={() => handleStatusUpdate(id, Status.Picked)}
                     >
                       Mark Picked
@@ -335,7 +335,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                     <DropdownItem
                       key="picked-hidden"
                       className="hidden"
-                      textValue="-"
+                      
                     />
                   )}
 
@@ -343,7 +343,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {role === ROLES.RIDER && status === Status.Picked ? (
                     <DropdownItem
                       key="delivered"
-                      textValue="Mark Delivered"
+                      
                       onClick={() => handleStatusUpdate(id, Status.Delivered)}
                     >
                       Mark Delivered
@@ -352,7 +352,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                     <DropdownItem
                       key="delivered-hidden"
                       className="hidden"
-                      textValue="-"
+                      
                     />
                   )}
 
@@ -360,7 +360,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {role !== ROLES.RIDER && status === Status.Delivered ? (
                     <DropdownItem
                       key="return"
-                      textValue="Return"
+                      
                       onClick={() => handleStatusUpdate(id, Status.Returned)}
                     >
                       Return
@@ -369,7 +369,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                     <DropdownItem
                       key="return-hidden"
                       className="hidden"
-                      textValue="-"
+                      
                     />
                   )}
 
@@ -377,7 +377,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                   {role !== ROLES.RIDER ? (
                     <DropdownItem
                       key="delete"
-                      textValue="Delete"
+                      
                       color="danger"
                       className="text-danger"
                       onClick={() => handleDelete(id)}
@@ -388,7 +388,7 @@ const ParcelTable = ({ setEarnings }: ParcelTableProps) => {
                     <DropdownItem
                       key="delete-hidden"
                       className="hidden"
-                      textValue="-"
+                      
                     />
                   )}
                 </DropdownMenu>

@@ -1,5 +1,5 @@
 import { QUERY_KEYS } from "@/lib/constants";
-import { ShopResponseType } from "@/types/ShopType";
+import { ShopResponseType, UpdateShopRequestType } from "@/types/ShopType";
 import { deleteShop, updateShop } from "@/utils/api/shop";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -48,7 +48,7 @@ export const useUpdateShop = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { id: string; data: any }) => updateShop(params),
+    mutationFn: (params: UpdateShopRequestType) => updateShop(params),
 
     onSuccess: () => {
       toast.success("Shop updated successfully");

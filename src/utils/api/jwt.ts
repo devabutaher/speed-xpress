@@ -14,7 +14,6 @@ export const createJWT = async (payload: JWTUserType) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error(error);
   }
 };
 
@@ -31,6 +30,5 @@ export const removeJWT = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error(error);
   }
 };

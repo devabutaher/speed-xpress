@@ -3,7 +3,6 @@ import NextThemeProvider from "@/providers/NextThemeProvider";
 import { ChildrenProps } from "@/types/ChildrenProps";
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Bengali } from "next/font/google";
-// @ts-ignore: side-effect import of global CSS
 import "./globals.css";
 
 const inter = Inter({
@@ -21,7 +20,7 @@ const notoSansBengali = Noto_Sans_Bengali({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://speedxpress.com",
+    process.env.NEXT_PUBLIC_CLIENT_URL ?? "https://speedxpress.vercel.app",
   ),
   title: {
     default: "Speed Xpress — Swift Parcel Management",
@@ -83,6 +82,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: ChildrenProps) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body
         className={`
           ${inter.variable}

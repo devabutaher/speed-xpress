@@ -71,7 +71,7 @@ const BlogPostClient = ({ slug }: BlogPostClientProps) => {
             if (paragraph.startsWith("## ")) {
               return (
                 <h2
-                  key={i}
+                  key={`h2-${i}`}
                   className="text-xl font-bold text-dark dark:text-light mt-8 mb-3"
                 >
                   {paragraph.replace("## ", "")}
@@ -80,14 +80,14 @@ const BlogPostClient = ({ slug }: BlogPostClientProps) => {
             }
             if (paragraph.startsWith("- ")) {
               return (
-                <ul key={i} className="list-disc pl-6 space-y-1">
+                <ul key={`ul-${i}`} className="list-disc pl-6 space-y-1">
                   {paragraph.split("\n").map((item, j) => (
                     <li key={j}>{item.replace("- ", "")}</li>
                   ))}
                 </ul>
               );
             }
-            return <p key={i}>{paragraph}</p>;
+            return <p key={`p-${i}`}>{paragraph}</p>;
           })}
         </div>
       </motion.article>
